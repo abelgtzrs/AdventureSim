@@ -14,7 +14,6 @@ const typeDefs = gql`
     token: String
   }
   type Query {
-    getStories: [AdventureSession]
     getAdventureSession(id: ID!): AdventureSession
   }
   type Mutation {
@@ -23,4 +22,5 @@ const typeDefs = gql`
     login(email: String!, password: String!): User
   }
 `;
-module.exports = typeDefs;
+
+export default typeDefs;
