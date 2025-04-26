@@ -1,49 +1,124 @@
 import User from "../models/User";
 import AdventureSession from "../models/AdventureSession";
+import { signToken } from "../utils/auth";
 
 const resolvers = {
   Query: {
-    // Fetch all stories
-    stories: async () => {
-      return await AdventureSession.find();
+    // Fetch all adventure sessions for logged-in user
+    getMyAdventureSessions: async (_: any, __: any, context: any) => {
+      if (!context.user) throw new Error("Not authenticated");
+      return await AdventureSession.find({ userId: context.user._id });
     },
-    // Fetch a single story by ID
-    story: async (_: any, { id }: { id: string }) => {
+    // Fetch a single adventure session
+    getAdventureSession: async (
+      _: any,
+      { id }: { id: string },
+      context: any
+    ) => {
+      if (!context.user) throw new Error("Not authenticated");
       return await AdventureSession.findById(id);
-    },
-    // Fetch a user by ID
-    user: async (_: any, { id }: { id: string }) => {
-      return await User.findById(id);
     },
   },
   Mutation: {
-    // Create a new story
-    createStory: async (
-      _: any,
-      { title, content, author }: { title: string; content: string; author: string }
-    ) => {
-      const newStory = new AdventureSession({ title, content, author });
-      return await newStory.save();
-    },
     // Register a new user
-    registerUser: async (
+    register: async (
       _: any,
-      { username, email, password }: { username: string; email: string; password: string }
+      {
+        username,
+        email,
+        password,
+      }: { username: string; email: string; password: string }
     ) => {
       const newUser = new User({ username, email, password });
-      return await newUser.save();
+      await newUser.save();
+      const token = signToken(newUser);
+      return { token, user: newUser };
     },
+
     // Login a user
-    loginUser: async (_: any, { email, password }: { email: string; password: string }) => {
+    login: async (
+      _: any,
+      { email, password }: { email: string; password: string }
+    ) => {
       const user = await User.findOne({ email });
-      if (!user) {
-        throw new Error("User not found");
-      }
+      if (!user) throw new Error("User not found");
       const isMatch = await user.comparePassword(password);
-      if (!isMatch) {
-        throw new Error("Invalid credentials");
+      if (!isMatch) throw new Error("Invalid credentials");
+
+      const token = signToken(user);
+      return { token, user };
+    },
+
+    // Start a new adventure
+    startAdventure: async (
+      _: any,
+      { title, category }: { title: string; category: string },
+      context: any
+    ) => {
+      if (!context.user) throw new Error("Not authenticated");
+
+      const newAdventure = new AdventureSession({
+        userId: context.user._id,
+        title,
+        category,
+        entries: [],
+        length: 0,
+        isActive: true,
+        createdAt: new Date(),
+      });
+
+      return await newAdventure.save();
+    },
+
+    // Continue an adventure (add an entry)
+    continueAdventure: async (
+      _: any,
+      { sessionId, input }: { sessionId: string; input: string },
+      context: any
+    ) => {
+      if (!context.user) throw new Error("Not authenticated");
+
+      const adventure = await AdventureSession.findById(sessionId);
+      if (!adventure) throw new Error("Adventure not found");
+
+      if (!adventure.isActive) throw new Error("Adventure already ended");
+      if (adventure.length >= 20) {
+        adventure.isActive = false;
+        await adventure.save();
+        throw new Error("Adventure reached maximum length");
       }
-      return user; // You can return a token here if needed
+
+      // Here you would normally call OpenAI to generate the next AI response
+      const aiResponse = `Fake AI Response to: ${input}`; // Placeholder
+
+      adventure.entries.push({
+        prompt: input,
+        response: aiResponse,
+        timestamp: new Date(),
+      });
+
+      adventure.length += 1;
+
+      if (adventure.length >= 20) {
+        adventure.isActive = false;
+      }
+
+      return await adventure.save();
+    },
+
+    // End adventure manually
+    endAdventure: async (
+      _: any,
+      { sessionId }: { sessionId: string },
+      context: any
+    ) => {
+      if (!context.user) throw new Error("Not authenticated");
+
+      const adventure = await AdventureSession.findById(sessionId);
+      if (!adventure) throw new Error("Adventure not found");
+
+      adventure.isActive = false;
+      return await adventure.save();
     },
   },
 };
