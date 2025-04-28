@@ -11,7 +11,7 @@ declare global {
   }
 }
 import { ApolloServer, BaseContext } from "@apollo/server";
-import { express as cookiesExpress } from "cookies";
+//import { express as cookiesExpress } from "cookies";
 import mongoose from "mongoose";
 import resolvers from "./schemas/resolvers";
 import typeDefs from "./schemas/typeDefs";
