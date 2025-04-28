@@ -1,7 +1,12 @@
 import express, { Request, Response, NextFunction } from "express";
-import dotenv from "dotenv";
 import cors from "cors";
-
+import dotenv from "dotenv";
+import adventureSessionRoutes from "./Routes/AdventureSessionsRoutes";
+import { ApolloServer, BaseContext } from "@apollo/server";
+import mongoose from "mongoose";
+import resolvers from "./schemas/resolvers";
+import typeDefs from "./schemas/typeDefs";
+import { authMiddleware } from "./utils/auth";
 // Extend the Request interface to include apolloContext
 declare global {
   namespace Express {
@@ -10,12 +15,6 @@ declare global {
     }
   }
 }
-import { ApolloServer, BaseContext } from "@apollo/server";
-import { express as cookiesExpress } from "cookies";
-import mongoose from "mongoose";
-import resolvers from "./schemas/resolvers";
-import typeDefs from "./schemas/typeDefs";
-import { authMiddleware } from "./utils/auth";
 
 dotenv.config();
 
@@ -28,6 +27,9 @@ async function startServer() {
     typeDefs,
     resolvers,
   });
+
+// Use the AdventureSession routes
+app.use("/api/adventure-sessions", adventureSessionRoutes);
 
   const PORT = process.env.PORT || 4000;
 
@@ -42,15 +44,23 @@ async function startServer() {
     })
   );
   
+  dotenv.config();
+  
   mongoose.connect(process.env.MONGO_URI || "", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  } as mongoose.ConnectOptions);
+    dbName: "adventure_sim",
+      });
 
   mongoose.connection.once("open", () => {
     console.log("Connected to MongoDB");
   });
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
 }
+
+startServer().catch((err) => {
+  console.error("Error starting the server:", err);
+});
 
 function expressMiddleware(
   server: ApolloServer<BaseContext>,
