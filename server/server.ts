@@ -48,7 +48,7 @@ app.use("/api/adventure-sessions", adventureSessionRoutes);
 
   console.log("MONGODB_URI:", process.env.MONGODB_URI); // Log the MONGODB_URI value
   
-  mongoose.connect(process.env.MONGO_URI || "", {
+  mongoose.connect(process.env.MONGODB_URI || "", {
     dbName: "adventure_sim",
   });
   
