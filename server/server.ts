@@ -45,17 +45,17 @@ app.use("/api/adventure-sessions", adventureSessionRoutes);
   );
   
   dotenv.config();
+
+  console.log("MONGODB_URI:", process.env.MONGODB_URI); // Log the MONGODB_URI value
   
   mongoose.connect(process.env.MONGO_URI || "", {
     dbName: "adventure_sim",
-      });
-
+  });
+  
   mongoose.connection.once("open", () => {
     console.log("Connected to MongoDB");
   });
-  app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-  });
+
 }
 
 startServer().catch((err) => {
