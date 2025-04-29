@@ -1,6 +1,5 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 
-// Define interfaces for form data
 interface LoginInfo {
   email: string;
   password: string;
