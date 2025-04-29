@@ -1,25 +1,19 @@
-import express, { Request, Response, NextFunction } from "express";
-import dotenv from "dotenv";
-import cors from "cors";
-
-// Extend the Request interface to include apolloContext
-declare global {
-  namespace Express {
-    interface Request {
-      apolloContext?: BaseContext;
-    }
-  }
-}
-import { ApolloServer, BaseContext } from "@apollo/server";
-import { express as cookiesExpress } from "cookies";
+import express from "express";
+import { ApolloServer } from "apollo-server-express";
 import mongoose from "mongoose";
-import resolvers from "./schemas/resolvers";
+import cors from "cors";
+import dotenv from "dotenv";
+import { ApolloServerPluginLandingPageLocalDefault } from "apollo-server-core";
+
 import typeDefs from "./schemas/typeDefs";
+import resolvers from "./schemas/resolvers";
 import { authMiddleware } from "./utils/auth";
 
 dotenv.config();
 
+const PORT = parseInt(process.env.PORT || "4000", 10);
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
@@ -27,45 +21,28 @@ async function startServer() {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
+    context: authMiddleware,
+    plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
   });
-
-  const PORT = process.env.PORT || 4000;
 
   await server.start();
-  app.use(
-    "/graphql",
-    expressMiddleware(server, {
-      context: async ({ req }: { req: Request }): Promise<BaseContext> => {
-        const context = authMiddleware({ req });
-        return { ...context };
-      },
-    })
-  );
-  
-  mongoose.connect(process.env.MONGO_URI || "", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  } as mongoose.ConnectOptions);
+  server.applyMiddleware({ app: app as any });
 
-  mongoose.connection.once("open", () => {
-    console.log("Connected to MongoDB");
-  });
+  try {
+    await mongoose.connect(process.env.MONGODB_URI || "", {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    } as mongoose.ConnectOptions);
+    console.log("✅ Connected to MongoDB");
+
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(
+        `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
+      );
+    });
+  } catch (err) {
+    console.error("❌ Failed to connect to MongoDB", err);
+  }
 }
 
-function expressMiddleware(
-  server: ApolloServer<BaseContext>,
-  { context }: { context: ({ req }: { req: Request }) => Promise<BaseContext> }
-) {
-  return async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const ctx = await context({ req });
-      req["apolloContext"] = ctx; // Attach the context to the request object
-      next();
-    } catch (err) {
-      console.error("Error in expressMiddleware:", err);
-      res.status(500).send("Internal Server Error");
-    }
-  };
-}
-
-
+startServer();

@@ -1,25 +1,47 @@
-const { gql } = require('apollo-server-express');
+import { gql } from "apollo-server-express";
+
 const typeDefs = gql`
-  type AdventureSession {
-    id: ID!
-    title: String!
-    description: String!
-    content: JSON!
-    author: User!
-  }
+  scalar JSON
+
   type User {
     id: ID!
     username: String!
     email: String!
-    token: String
   }
+
+  type Auth {
+    token: String!
+    user: User!
+  }
+
+  type Entry {
+    prompt: String!
+    response: String!
+    timestamp: String!
+  }
+
+  type AdventureSession {
+    id: ID!
+    title: String!
+    category: String!
+    entries: [Entry!]!
+    length: Int!
+    isActive: Boolean!
+    createdAt: String!
+    author: User!
+  }
+
   type Query {
     getAdventureSession(id: ID!): AdventureSession
+    getMyAdventureSessions: [AdventureSession]
   }
+
   type Mutation {
-    createAdventureSession(title: String!, description: String!, content: JSON!): AdventureSession
-    register(username: String!, email: String!, password: String!): User
-    login(email: String!, password: String!): User
+    register(username: String!, email: String!, password: String!): Auth
+    login(email: String!, password: String!): Auth
+    startAdventure(title: String!, category: String!): AdventureSession
+    continueAdventure(sessionId: ID!, input: String!): AdventureSession
+    endAdventure(sessionId: ID!): AdventureSession
   }
 `;
 
