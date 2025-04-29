@@ -1,4 +1,5 @@
-const { gql } = require('apollo-server-express');
+import { gql } from "graphql-tag";
+
 const typeDefs = gql`
   type AdventureSession {
     id: ID!
@@ -13,14 +14,21 @@ const typeDefs = gql`
     email: String!
     token: String
   }
-  type Query {
+   type Query {
     getAdventureSession(id: ID!): AdventureSession
+    example: String
+    stories: [AdventureSession] # Add the missing "stories" field
+    story(id: ID!): AdventureSession # Add the "story" field if needed
+    user(id: ID!): User
   }
   type Mutation {
+    updateData(input: JSON!): JSON # Add the missing "updateData" mutation
+    createStory(title: String!, content: String!, author: String!): AdventureSession # Add this mutation
     createAdventureSession(title: String!, description: String!, content: JSON!): AdventureSession
-    register(username: String!, email: String!, password: String!): User
-    login(email: String!, password: String!): User
+    registerUser(username: String!, email: String!, password: String!): User
+    loginUser(email: String!, password: String!): User
   }
+  scalar JSON
 `;
 
 export default typeDefs;

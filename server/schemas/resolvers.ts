@@ -1,8 +1,42 @@
 import User from "../models/User";
 import AdventureSession from "../models/AdventureSession";
+import { GraphQLScalarType, Kind } from "graphql";
+import { createAdventureSession } from "../controller/AdventureSessionsController";
+
+const JSONScalar = new GraphQLScalarType({
+  name: "JSON",
+  description: "Custom scalar type for JSON data",
+  parseValue(value) {
+    // Called when the client sends JSON data
+    return value;
+  },
+  serialize(value) {
+    // Called when sending JSON data to the client
+    return value;
+  },
+  parseLiteral(ast) {
+    // Called when parsing JSON data in the query
+    if (ast.kind === Kind.OBJECT) {
+      const value: Record<string, any> = {};
+      ast.fields.forEach((field) => {
+        value[field.name.value] = field.value.kind === Kind.STRING ? field.value.value : null;
+      });
+      return value;
+    }
+    return null;
+  },
+});
 
 const resolvers = {
+  JSON: JSONScalar, // Add the custom JSON scalar resolver
   Query: {
+    getAdventureSession: async (_: any, { id }: { id: string }) => {
+      // Logic to fetch an AdventureSession by ID
+    },
+    example: () => {
+      return { key: "value" }; // Example JSON response
+    },
+
     // Fetch all stories
     stories: async () => {
       return await AdventureSession.find();
@@ -17,6 +51,9 @@ const resolvers = {
     },
   },
   Mutation: {
+    updateData: (_: any, { input }: { input: any }) => {
+      return input; // Echo the input JSON
+    },
     // Create a new story
     createStory: async (
       _: any,
@@ -25,6 +62,7 @@ const resolvers = {
       const newStory = new AdventureSession({ title, content, author });
       return await newStory.save();
     },
+
     // Register a new user
     registerUser: async (
       _: any,
