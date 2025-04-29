@@ -1,26 +1,35 @@
 import User from "../models/User";
 import AdventureSession from "../models/AdventureSession";
-import { signToken } from "../utils/auth";
+import { signToken } from "../utils/auth"; // ✅ Correct named import!
+
+function authRequired(context: any) {
+  if (!context.user) {
+    console.warn("[AUTH] Unauthorized access attempt");
+    throw new Error("Not authenticated");
+  }
+  return context.user;
+}
 
 const resolvers = {
   Query: {
-    // Fetch all adventure sessions for logged-in user
     getMyAdventureSessions: async (_: any, __: any, context: any) => {
-      if (!context.user) throw new Error("Not authenticated");
-      return await AdventureSession.find({ userId: context.user._id });
+      console.log("[QUERY] getMyAdventureSessions");
+      const user = authRequired(context);
+      return await AdventureSession.find({ userId: user._id });
     },
-    // Fetch a single adventure session
+
     getAdventureSession: async (
       _: any,
       { id }: { id: string },
       context: any
     ) => {
-      if (!context.user) throw new Error("Not authenticated");
+      console.log("[QUERY] getAdventureSession", id);
+      const user = authRequired(context);
       return await AdventureSession.findById(id);
     },
   },
+
   Mutation: {
-    // Register a new user
     register: async (
       _: any,
       {
@@ -29,19 +38,21 @@ const resolvers = {
         password,
       }: { username: string; email: string; password: string }
     ) => {
+      console.log("[MUTATION] register", username, email);
       const newUser = new User({ username, email, password });
       await newUser.save();
       const token = signToken(newUser);
       return { token, user: newUser };
     },
 
-    // Login a user
     login: async (
       _: any,
       { email, password }: { email: string; password: string }
     ) => {
+      console.log("[MUTATION] login", email);
       const user = await User.findOne({ email });
       if (!user) throw new Error("User not found");
+
       const isMatch = await user.comparePassword(password);
       if (!isMatch) throw new Error("Invalid credentials");
 
@@ -49,16 +60,16 @@ const resolvers = {
       return { token, user };
     },
 
-    // Start a new adventure
     startAdventure: async (
       _: any,
       { title, category }: { title: string; category: string },
       context: any
     ) => {
-      if (!context.user) throw new Error("Not authenticated");
+      console.log("[MUTATION] startAdventure", title, category);
+      const user = authRequired(context);
 
-      const newAdventure = new AdventureSession({
-        userId: context.user._id,
+      const newAdventure = await AdventureSession.create({
+        userId: user._id,
         title,
         category,
         entries: [],
@@ -67,16 +78,17 @@ const resolvers = {
         createdAt: new Date(),
       });
 
-      return await newAdventure.save();
+      console.log("[DB] Adventure created", newAdventure.id);
+      return newAdventure;
     },
 
-    // Continue an adventure (add an entry)
     continueAdventure: async (
       _: any,
       { sessionId, input }: { sessionId: string; input: string },
       context: any
     ) => {
-      if (!context.user) throw new Error("Not authenticated");
+      console.log("[MUTATION] continueAdventure", sessionId, input);
+      const user = authRequired(context);
 
       const adventure = await AdventureSession.findById(sessionId);
       if (!adventure) throw new Error("Adventure not found");
@@ -88,8 +100,8 @@ const resolvers = {
         throw new Error("Adventure reached maximum length");
       }
 
-      // Here you would normally call OpenAI to generate the next AI response
-      const aiResponse = `Fake AI Response to: ${input}`; // Placeholder
+      // Simulate AI response for now
+      const aiResponse = `Fake AI Response to: ${input}`;
 
       adventure.entries.push({
         prompt: input,
@@ -103,22 +115,33 @@ const resolvers = {
         adventure.isActive = false;
       }
 
-      return await adventure.save();
+      await adventure.save();
+      console.log(
+        "[DB] Adventure updated",
+        adventure.id,
+        "length:",
+        adventure.length
+      );
+
+      return adventure;
     },
 
-    // End adventure manually
     endAdventure: async (
       _: any,
       { sessionId }: { sessionId: string },
       context: any
     ) => {
-      if (!context.user) throw new Error("Not authenticated");
+      console.log("[MUTATION] endAdventure", sessionId);
+      const user = authRequired(context);
 
       const adventure = await AdventureSession.findById(sessionId);
       if (!adventure) throw new Error("Adventure not found");
 
       adventure.isActive = false;
-      return await adventure.save();
+      await adventure.save();
+      console.log("[DB] Adventure ended", adventure.id);
+
+      return adventure;
     },
   },
 };

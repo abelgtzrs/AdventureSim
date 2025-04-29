@@ -4,7 +4,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node server.ts",
+    "start": "ts-node-dev --respawn --transpile-only server.ts",
     "build": "tsc"
   },
   "keywords": [],

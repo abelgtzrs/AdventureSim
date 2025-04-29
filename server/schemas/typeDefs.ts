@@ -1,6 +1,19 @@
 import { gql } from "apollo-server-express";
 
 const typeDefs = gql`
+  scalar JSON
+
+  type User {
+    id: ID!
+    username: String!
+    email: String!
+  }
+
+  type Auth {
+    token: String!
+    user: User!
+  }
+
   type Entry {
     prompt: String!
     response: String!
@@ -13,16 +26,9 @@ const typeDefs = gql`
     category: String!
     entries: [Entry!]!
     length: Int!
-    createdAt: String!
     isActive: Boolean!
+    createdAt: String!
     author: User!
-  }
-
-  type User {
-    id: ID!
-    username: String!
-    email: String!
-    token: String
   }
 
   type Query {
@@ -31,8 +37,8 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    register(username: String!, email: String!, password: String!): User
-    login(email: String!, password: String!): User
+    register(username: String!, email: String!, password: String!): Auth
+    login(email: String!, password: String!): Auth
     startAdventure(title: String!, category: String!): AdventureSession
     continueAdventure(sessionId: ID!, input: String!): AdventureSession
     endAdventure(sessionId: ID!): AdventureSession
