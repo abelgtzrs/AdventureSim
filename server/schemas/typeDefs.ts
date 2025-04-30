@@ -1,12 +1,9 @@
-import { gql } from "graphql-tag";
-
-const typeDefs = gql`
+const typeDefs = `
   type AdventureSession {
     id: ID!
     title: String!
-    description: String!
     content: JSON!
-    author: User!
+    author: String!
   }
   type User {
     id: ID!
