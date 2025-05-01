@@ -1,7 +1,9 @@
 import User from "../models/User";
 import AdventureSession from "../models/AdventureSession";
 import { GraphQLScalarType, Kind } from "graphql";
-import { createAdventureSession } from "../controller/AdventureSessionsController";
+import { signToken } from "../utils/auth";
+import { sign } from "crypto";
+//import { createAdventureSession } from "../controller/AdventureSessionsController";
 
 const JSONScalar = new GraphQLScalarType({
   name: "JSON",
@@ -19,7 +21,8 @@ const JSONScalar = new GraphQLScalarType({
     if (ast.kind === Kind.OBJECT) {
       const value: Record<string, any> = {};
       ast.fields.forEach((field) => {
-        value[field.name.value] = field.value.kind === Kind.STRING ? field.value.value : null;
+        value[field.name.value] =
+          field.value.kind === Kind.STRING ? field.value.value : null;
       });
       return value;
     }
@@ -57,22 +60,48 @@ const resolvers = {
     // Create a new story
     createStory: async (
       _: any,
-      { title, content, author }: { title: string; content: string; author: string }
+      {
+        title,
+        content,
+        author,
+      }: { title: string; content: string; author: string }
     ) => {
+      console.log(`${title} ${content} ${author}`);
       const newStory = new AdventureSession({ title, content, author });
-      return await newStory.save();
+      newStory.save();
+      console.log(`${newStory}`);
+      return {
+        id: newStory._id,
+        title: newStory.title,
+        content: content,
+        author: author,
+      };
     },
 
     // Register a new user
     registerUser: async (
       _: any,
-      { username, email, password }: { username: string; email: string; password: string }
+      {
+        username,
+        email,
+        password,
+      }: { username: string; email: string; password: string }
     ) => {
       const newUser = new User({ username, email, password });
-      return await newUser.save();
+      await newUser.save();
+      const token = signToken(username, email, newUser._id);
+      return {
+        id: newUser._id,
+        username: username,
+        email: email,
+        token: token,
+      };
     },
     // Login a user
-    loginUser: async (_: any, { email, password }: { email: string; password: string }) => {
+    loginUser: async (
+      _: any,
+      { email, password }: { email: string; password: string }
+    ) => {
       const user = await User.findOne({ email });
       if (!user) {
         throw new Error("User not found");
