@@ -10,7 +10,7 @@ export interface IEntry {
 export interface IAdventureSession extends Document {
   userId: Types.ObjectId;
   title: string;
-  class: string;
+  category: string;
   isActive: boolean;
   entries: IEntry[];
 }
@@ -25,7 +25,7 @@ const entrySchema = new Schema<IEntry>({
 const adventureSchema = new Schema<IAdventureSession>({
   userId: { type: Schema.Types.ObjectId, ref: "User" },
   title: String,
-  class: String,
+  category: String,
   isActive: { type: Boolean, default: true },
   entries: [entrySchema],
 });

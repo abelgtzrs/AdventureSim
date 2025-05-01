@@ -22,7 +22,7 @@
     "graphql-tag": "^2.12.6",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^8.4.3",
-    "openai": "^4.96.0"
+    "openai": "^4.96.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
