@@ -23,7 +23,7 @@ const entrySchema = new Schema<IEntry>({
 });
 
 const adventureSchema = new Schema<IAdventureSession>({
-  userId: { type: Schema.Types.ObjectId, ref: "User" },
+  userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
   title: String,
   category: String,
   isActive: { type: Boolean, default: true },

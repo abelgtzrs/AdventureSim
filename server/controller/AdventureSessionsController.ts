@@ -52,8 +52,18 @@ export const continueAdventure = async ({
   const session = await AdventureSession.findById(sessionId);
   if (!session) throw new Error("Adventure session not found.");
   if (!session.isActive) throw new Error("This adventure is already complete.");
+
+  // 🛡️ SAFETY CHECK — prevents crashing on .toString()
+  if (!session.userId) {
+    console.error("[WARN] session.userId missing for session:", session._id);
+    throw new Error("This session is missing a user and cannot be continued.");
+  }
+
+  // ⛔ If user doesn't own session
   if (session.userId.toString() !== userId)
     throw new Error("Unauthorized access.");
+
+  // Continue as usual...
 
   const isFinalTurn = session.entries.length >= 19;
   const turnNumber = session.entries.length + 1;

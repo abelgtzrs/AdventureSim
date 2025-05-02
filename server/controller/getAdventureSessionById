@@ -1,9 +1,0 @@
-export const getAdventureSessionById = async (
-  sessionId: string,
-  userId: string
-) => {
-  const session = await AdventureSession.findById(sessionId);
-  if (!session) throw new Error("Session not found");
-  if (session.userId.toString() !== userId) throw new Error("Unauthorized");
-  return session;
-};
