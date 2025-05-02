@@ -1,0 +1,33 @@
+:root{
+    --pink: #f72585;
+    --teal: #5e60ce;
+    --background-color: #1d1c1dff;
+    
+}
+
+body {
+    background-color: var(--background-color);
+}
+
+h1 { 
+    color: var(--pink);
+}
+
+ul {
+    
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+li {
+    text-align: justify;
+    margin-bottom: 4px;
+}
+
+button {
+    color: var(--pink);
+}
