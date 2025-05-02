@@ -1,116 +1,93 @@
-import User from "../models/User";
-import AdventureSession from "../models/AdventureSession";
-import { GraphQLScalarType, Kind } from "graphql";
-import { signToken } from "../utils/auth";
-import { sign } from "crypto";
-//import { createAdventureSession } from "../controller/AdventureSessionsController";
+import {
+  createAdventureSession,
+  fetchAdventureSessions,
+  getAdventureSessionById,
+  continueAdventure,
+  endAdventure,
+  deleteAdventureSession,
+} from "../controller/AdventureSessionsController";
 
-const JSONScalar = new GraphQLScalarType({
-  name: "JSON",
-  description: "Custom scalar type for JSON data",
-  parseValue(value) {
-    // Called when the client sends JSON data
-    return value;
-  },
-  serialize(value) {
-    // Called when sending JSON data to the client
-    return value;
-  },
-  parseLiteral(ast) {
-    // Called when parsing JSON data in the query
-    if (ast.kind === Kind.OBJECT) {
-      const value: Record<string, any> = {};
-      ast.fields.forEach((field) => {
-        value[field.name.value] =
-          field.value.kind === Kind.STRING ? field.value.value : null;
-      });
-      return value;
-    }
-    return null;
-  },
-});
+import User from "../models/User";
+import { signToken } from "../utils/auth";
+
+// Helper for checking auth
+const authRequired = (context: any) => {
+  if (!context.user) throw new Error("Not authenticated");
+  return context.user;
+};
 
 const resolvers = {
-  JSON: JSONScalar, // Add the custom JSON scalar resolver
   Query: {
-    getAdventureSession: async (_: any, { id }: { id: string }) => {
-      // Logic to fetch an AdventureSession by ID
-    },
-    example: () => {
-      return { key: "value" }; // Example JSON response
+    getMyAdventureSessions: async (_: any, __: any, context: any) => {
+      const user = authRequired(context);
+      return await fetchAdventureSessions(user._id);
     },
 
-    // Fetch all stories
-    stories: async () => {
-      return await AdventureSession.find();
-    },
-    // Fetch a single story by ID
-    story: async (_: any, { id }: { id: string }) => {
-      return await AdventureSession.findById(id);
-    },
-    // Fetch a user by ID
-    user: async (_: any, { id }: { id: string }) => {
-      return await User.findById(id);
+    getAdventureSession: async (
+      _: any,
+      { id }: { id: string },
+      context: any
+    ) => {
+      const user = authRequired(context);
+      return await getAdventureSessionById(id, user._id);
     },
   },
-  Mutation: {
-    updateData: (_: any, { input }: { input: any }) => {
-      return input; // Echo the input JSON
-    },
-    // Create a new story
-    createStory: async (
-      _: any,
-      {
-        title,
-        content,
-        author,
-      }: { title: string; content: string; author: string }
-    ) => {
-      console.log(`${title} ${content} ${author}`);
-      const newStory = new AdventureSession({ title, content, author });
-      newStory.save();
-      console.log(`${newStory}`);
-      return {
-        id: newStory._id,
-        title: newStory.title,
-        content: content,
-        author: author,
-      };
-    },
 
-    // Register a new user
-    registerUser: async (
-      _: any,
-      {
-        username,
-        email,
-        password,
-      }: { username: string; email: string; password: string }
-    ) => {
+  Mutation: {
+    register: async (_: any, { username, email, password }: any) => {
       const newUser = new User({ username, email, password });
       await newUser.save();
-      const token = signToken(username, email, newUser._id);
-      return {
-        id: newUser._id,
-        username: username,
-        email: email,
-        token: token,
-      };
+      const token = signToken({
+        email: newUser.email,
+        username: newUser.username,
+        _id: newUser._id,
+      });
+      return { token, user: newUser };
     },
-    // Login a user
-    loginUser: async (
-      _: any,
-      { email, password }: { email: string; password: string }
-    ) => {
+
+    login: async (_: any, { email, password }: any) => {
       const user = await User.findOne({ email });
-      if (!user) {
-        throw new Error("User not found");
-      }
+      if (!user) throw new Error("User not found");
       const isMatch = await user.comparePassword(password);
-      if (!isMatch) {
-        throw new Error("Invalid credentials");
-      }
-      return user; // You can return a token here if needed
+      if (!isMatch) throw new Error("Invalid credentials");
+      const token = signToken({
+        email: user.email,
+        username: user.username,
+        _id: user._id,
+      });
+      return { token, user };
+    },
+
+    startAdventure: async (_: any, { title, category }: any, context: any) => {
+      const user = authRequired(context);
+      return await createAdventureSession({
+        userId: user._id,
+        title,
+        category,
+      });
+    },
+
+    continueAdventure: async (
+      _: any,
+      { sessionId, input }: any,
+      context: any
+    ) => {
+      const user = authRequired(context);
+      return await continueAdventure({
+        sessionId,
+        userId: user._id,
+        userInput: input,
+      });
+    },
+
+    endAdventure: async (_: any, { sessionId }: any, context: any) => {
+      const user = authRequired(context);
+      return await endAdventure(sessionId, user._id);
+    },
+
+    deleteAdventure: async (_: any, { sessionId }: any, context: any) => {
+      const user = authRequired(context);
+      return await deleteAdventureSession(sessionId, user._id);
     },
   },
 };
