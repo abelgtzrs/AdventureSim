@@ -1,31 +1,53 @@
-const typeDefs = `
+import { gql } from "apollo-server-express";
+
+const typeDefs = gql`
+  scalar JSON
+
+  type Entry {
+    prompt: String!
+    response: String!
+    chaosScore: Int
+    timestamp: String!
+  }
+
   type AdventureSession {
     id: ID!
     title: String!
-    content: JSON!
-    author: String!
+    category: String!
+    isActive: Boolean!
+    entries: [Entry!]!
+    createdAt: String
   }
+
   type User {
     id: ID!
     username: String!
     email: String!
-    token: String
   }
-   type Query {
+
+  type AuthPayload {
+    token: String!
+    user: User!
+  }
+
+  type DeleteResponse {
+    success: Boolean!
+  }
+
+  type Query {
+    getMyAdventureSessions: [AdventureSession!]!
     getAdventureSession(id: ID!): AdventureSession
-    example: String
-    stories: [AdventureSession] # Add the missing "stories" field
-    story(id: ID!): AdventureSession # Add the "story" field if needed
-    user(id: ID!): User
   }
+
   type Mutation {
-    updateData(input: JSON!): JSON # Add the missing "updateData" mutation
-    createStory(title: String!, content: String!, author: String!): AdventureSession # Add this mutation
-    createAdventureSession(title: String!, description: String!, content: JSON!): AdventureSession
-    registerUser(username: String!, email: String!, password: String!): User
-    loginUser(email: String!, password: String!): User
+    register(username: String!, email: String!, password: String!): AuthPayload
+    login(email: String!, password: String!): AuthPayload
+
+    startAdventure(title: String!, category: String!): AdventureSession
+    continueAdventure(sessionId: ID!, input: String!): AdventureSession
+    endAdventure(sessionId: ID!): AdventureSession
+    deleteAdventure(sessionId: ID!): DeleteResponse
   }
-  scalar JSON
 `;
 
 export default typeDefs;

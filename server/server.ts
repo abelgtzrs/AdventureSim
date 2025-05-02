@@ -2,13 +2,12 @@ import express from "express";
 import path from "node:path";
 import type { Request, Response } from "express";
 import db from "./config/connection";
-import { ApolloServer } from "@apollo/server"; // Note: Import from @apollo/server-express
+import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
-// import { typeDefs, resolvers } from './schemas/index.js';
 import typeDefs from "./schemas/typeDefs";
 import resolvers from "./schemas/resolvers";
-// import { authMiddleware } from "./utils/auth";
 import { authenticateToken } from "./utils/auth.js";
+import cors from "cors";
 
 const server = new ApolloServer({
   typeDefs,
@@ -26,9 +25,16 @@ const startApolloServer = async () => {
   app.use(express.json());
 
   app.use(
+    cors({
+      origin: "*",
+      credentials: false,
+    })
+  );
+
+  app.use(
     "/graphql",
-    expressMiddleware(server as any, {
-      context: authenticateToken as any,
+    expressMiddleware(server, {
+      context: authenticateToken,
     })
   );
 
