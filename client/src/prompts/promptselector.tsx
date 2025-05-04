@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { storyPrompts } from './storyPrompts';
-import './prompts.css'
+import './styles/prompts.css';
 
 
 
@@ -18,15 +18,14 @@ const PromptSelector: React.FC<Props> = ({ onSelect }) => {
   }, []);
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Choose a Story Prompt</h1>
-      <ul className="space-y-3">
+    <div className="container">
+      <h1 className="header">Choose a Story Prompt</h1>
+      <ul className="list">
         {displayPrompts.map((prompt, index) => (
           <li key={index}>
             <button
               onClick={() => onSelect(prompt)}
-              className="bg-blue-600 text-white px-4 py-2 rounded w-full text-left"
-            >
+              className="button">
               {prompt}
             </button>
           </li>

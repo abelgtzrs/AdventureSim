@@ -2,6 +2,18 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
+  --pink: #f72585;
+  --teal: #5e60ce;
+  --background-color: #1d1c1dff;
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-align: center;
 }
 
@@ -12,10 +24,10 @@
   transition: filter 300ms;
 }
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter:var(--teal) drop-shadow(0 0 2em );
 }
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: var(--pink) drop-shadow(0 0 2em );
 }
 
 @keyframes logo-spin {
@@ -38,5 +50,5 @@
 }
 
 .read-the-docs {
-  color: #888;
+  color: var(--teal);
 }

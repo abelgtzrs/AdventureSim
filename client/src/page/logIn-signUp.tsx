@@ -1,4 +1,5 @@
 import { useState, ChangeEvent, FormEvent } from "react";
+import './styles/login-signup.css';
 
 interface LoginInfo {
   email: string;
@@ -23,7 +24,6 @@ export default function AuthPage() {
     confirmPassword: "",
   });
 
-  
   const handleChange = (
     e: ChangeEvent<HTMLInputElement>,
     setFormData: (value: any) => void
@@ -47,7 +47,7 @@ export default function AuthPage() {
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", gap: "50px" }}>
+    <div>
       {/* Login Section */}
       <section>
         <h1>Login</h1>

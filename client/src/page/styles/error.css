@@ -1,0 +1,48 @@
+/* Root variables for consistent theming */
+:root {
+  --primary-color: #5e60ce; /* Teal */
+  --secondary-color: #f72585; /* Pink */
+  --background-color: #1d1c1d; /* Dark background */
+  --text-color: #ffffff; /* White text */
+  --font-family: 'Arial', sans-serif;
+}
+
+/* General body styling */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+/* Error page container */
+#error-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+/* Heading styling */
+#error-page h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+/* Paragraph styling */
+#error-page p {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+#error-page i {
+  color: var(--secondary-color);
+  font-style: italic;
+}

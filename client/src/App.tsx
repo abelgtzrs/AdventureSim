@@ -1,34 +1,43 @@
-import React from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
+import './App.css';
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  createHttpLink,
+} from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 
-const App = () => {
-import './App.css'
-import StoryCreator from './storycreate/storyCreate'
+// Construct our main GraphQL API endpoint
+const httpLink = createHttpLink({
+  uri: '/graphql',
+});
 
-const App: React.FC = () => {
+// Construct request middleware that will attach the JWT token to every request as an `authorization` header
+const authLink = setContext((_, { headers }) => {
+  // get the authentication token from local storage if it exists
+  const token = localStorage.getItem('id_token');
+  // return the headers to the context so httpLink can read them
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : '',
+    },
+  };
+});
+
+const client = new ApolloClient({
+  // Set up our client to execute the `authLink` middleware prior to making the request to our GraphQL API
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache(),
+});
+
+function App() {
   return (
-    <div className="App">
-      <StoryCreator /> {}
-    </div>
+    <ApolloProvider client={client}>
+    <Outlet />
+    </ApolloProvider>
   );
-};
-    <div>
-      <header style={{ padding: '10px', backgroundColor: '#f4f4f4', textAlign: 'center' }}>
-        <h1>AdventureSim</h1>
-        <nav>
-          <Link to="/" style={{ margin: '0 10px' }}>Home</Link>
-          {/* Removed AuthPage link from navigation */}
-        </nav>
-      </header>
-      <main style={{ padding: '20px' }}>
-        {/* Renders the child routes */}
-        <Outlet />
-      </main>
-      <footer style={{ textAlign: 'center', padding: '10px', backgroundColor: '#f4f4f4' }}>
-        <p>&copy; 2025 AdventureSim. All rights reserved.</p>
-      </footer>
-    </div>
-  );
-};
+}
 
-export default App;
+export default App;;

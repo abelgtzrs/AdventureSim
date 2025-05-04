@@ -1,20 +1,32 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-
+import { Link, useNavigate, Outlet } from 'react-router-dom';
+import './styles/homepage.css';
 const HomePage = () => {
   const navigate = useNavigate(); // Hook to programmatically navigate
 
-  const handleButtonClick = () => {
-    navigate('/AuthPage'); // Navigate to the AuthPage route
+  const App = () => {
+    return (
+      <div>
+        <header>
+          <h1>AdventureSim</h1>
+          <nav>
+            <Link to="/">Home</Link>
+            {/* Removed AuthPage link from navigation */}
+          </nav>
+        </header>
+        <main>
+          {/* Renders the child routes */}
+          <Outlet />
+        </main>
+        <footer>
+          <p>&copy; 2025 AdventureSim. All rights reserved.</p>
+        </footer>
+      </div>
+    );
   };
+  
+ 
 
-  return (
-    <div style={{ textAlign: 'center', padding: '20px' }}>
-      <h1>Welcome to AdventureSim</h1>
-      <p>Explore!, Discover!, Enjoy!</p>
-      <button onClick={handleButtonClick}>Start your journey!</button>
-    </div>
-  );
+  return <App />;
 };
 
 export default HomePage;

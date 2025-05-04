@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PromptSelector from '../prompts/promptselector';
 import StoryPlayer from '../player/storyPlayer';
+import './storyCreate.css';
 
 interface Choice {
   text: string;
@@ -30,8 +31,6 @@ const StoryCreator: React.FC = () => {
     setSelectedPrompt(prompt);
   };
 
-  
-
   if (!selectedPrompt) {
     return <PromptSelector onSelect={startStoryFromPrompt} />;
   }
@@ -52,17 +51,9 @@ const StoryCreator: React.FC = () => {
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Story Builder</h1>
-      <button
-        onClick={addScene}
-        className="bg-blue-600 text-white px-4 py-2 rounded mb-6"
-      >
-        Add Scene
-      </button>
-
-      {}
-      {}
+    <div>
+      <h1>Story Builder</h1>
+      <button onClick={addScene}>Add Scene</button>
     </div>
   );
 };

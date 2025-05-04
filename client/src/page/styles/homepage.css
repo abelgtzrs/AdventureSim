@@ -1,0 +1,71 @@
+/* Root variables for consistent theming */
+:root {
+  --primary-color: #5e60ce; /* Teal */
+  --secondary-color: #f72585; /* Pink */
+  --background-color: #1d1c1d; /* Dark background */
+  --text-color: #ffffff; /* White text */
+}
+
+/* General body styling */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Container for the entire page */
+div {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header styling */
+header {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  padding: 1rem;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 2rem;
+  margin: 0;
+}
+
+nav {
+  margin-top: 0.5rem;
+}
+
+nav a {
+  color: var(--text-color);
+  text-decoration: none;
+  margin: 0 1rem;
+  font-weight: bold;
+}
+
+nav a:hover {
+  color: var(--secondary-color);
+}
+
+/* Main content styling */
+main {
+  flex: 1;
+  padding: 2rem;
+  background-color: var(--background-color);
+}
+
+/* Footer styling */
+footer {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  text-align: center;
+  padding: 1rem;
+}
+
+footer p {
+  margin: 0;
+  font-size: 0.875rem;
+}
