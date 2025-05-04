@@ -5,7 +5,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href=https://github.com/abelgtzrs/AdventureSim.git">
+  <a href=https://github.com/abelgtzrs/AdventureSim">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
@@ -14,14 +14,14 @@
   <p align="center">
     AdventureSim is a full-stack application that allows users to create and play interactive adventure stories. It features a React-based client and an Express/GraphQL server.
     <br />
-    <a href=https://github.com/abelgtzrs/AdventureSim.git"><strong>Explore the docs »</strong></a>
+    <a href=https://github.com/abelgtzrs/AdventureSim"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href=https://github.com/abelgtzrs/AdventureSim.git">View Demo</a>
+    <a href=https://github.com/abelgtzrs/AdventureSim">View Demo</a>
     &middot;
-    <a href=https://github.com/abelgtzrs/AdventureSim.git/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+    <a href=https://github.com/abelgtzrs/AdventureSim/issues/">Report Bug</a>
     &middot;
-    <a href=https://github.com/abelgtzrs/AdventureSim.git/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <a href=https://github.com/abelgtzrs/AdventureSim/issues/">Request Feature</a>
   </p>
 </div>
 
@@ -49,7 +49,7 @@
     <li><a href="#script">Script</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
+    <li><a href="#Deployment">Deployment</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
@@ -74,17 +74,6 @@ AdventureSim is a simulator for creating and playing text-based adventure storie
 
 ---
 
-## Getting Started
-
-Follow these instructions to set up the project locally.
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) (v16+ recommended)
-- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
-
-
-
 ## Usage
 
 1. Open the client in your browser at `http://localhost:5173`.
@@ -98,8 +87,6 @@ AdventureSim is a simulator for creating and playing text-based adventure storie
 ---
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 ## Built With
 
@@ -135,7 +122,7 @@ Follow these instructions to set up the project locally.
 ---
 1. Clone the repository:
    ```sh
-        git clone https://github.com/your-username/adventuresim.git
+        git clone https://github.com/your-username/adventuresim
         cd adventuresim
 
 2. Install dependencies for both the client and server:
@@ -187,7 +174,7 @@ Access the GraphQL API at http://localhost:3001/graphql.
 
 ---
 
-See the [open issues](https://github.com/abelgtzrs/AdventureSim.git/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/abelgtzrs/AdventureSim/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -210,18 +197,11 @@ Don't forget to give the project a star! Thanks again!
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Top contributors:
-
-<a href=https://github.com/abelgtzrs/AdventureSim.git/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=github_username/repo_name" alt="contrib.rocks image" />
-</a>
-
+* Abel G - GitHub ( abelgtzrs )              
+* Fareed K - Github ( Farkan161 )
+* Christine L - Github ( nita9801 )          
+* Jake V - GitHub ( JakeV64 )
 ---
-
-
-
-
-
-
 
 ## License
 
@@ -231,12 +211,11 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- CONTACT -->
-## Contact
+<!-- Deployment -->
+## Deployment
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
-
-Project Link: [https://github.com/abelgtzrs/AdventureSim.git](https://github.com/abelgtzrs/AdventureSim.git)
+*   Render: 
+*   Project Link: [https://github.com/abelgtzrs/AdventureSim](https://github.com/abelgtzrs/AdventureSim)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
