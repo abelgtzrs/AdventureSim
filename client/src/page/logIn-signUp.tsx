@@ -1,18 +1,11 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import './styles/login-signup.css';
+import "./styles/login-signup.css";
 
-// Mock AuthService for demonstration purposes
 const AuthService = {
-  _authenticateUser: async (email: string, password: string): Promise<boolean> => {
-    // Replace this with actual authentication logic
-    return email === "nit9801@abc.com" && password === "Admin123!";
-  },
-  get authenticateUser() {
-    return this._authenticateUser;
-  },
-  set authenticateUser(value) {
-    this._authenticateUser = value;
+  authenticateUser: async (email: string, password: string): Promise<boolean> => {
+    // Simulated success only for demo user
+    return email === "test@example.com" && password === "password123";
   },
 };
 
@@ -21,141 +14,114 @@ interface LoginInfo {
   password: string;
 }
 
-interface SignupInfo {
-  email: string;
-  password: string;
+interface SignupInfo extends LoginInfo {
   confirmPassword: string;
 }
 
 export default function AuthPage() {
   const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [loginInfo, setLoginInfo] = useState<LoginInfo>({
-    email: '',
-    password: '',
-  });
+  const [isLogin, setIsLogin] = useState(true);
 
-  const [signupInfo, setSignupInfo] = useState<SignupInfo>({
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+  const [loginInfo, setLoginInfo] = useState<LoginInfo>({ email: "", password: "" });
+  const [signupInfo, setSignupInfo] = useState<SignupInfo>({ email: "", password: "", confirmPassword: "" });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setState: React.Dispatch<React.SetStateAction<any>>
-  ) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>, setter: Function) => {
     const { name, value } = e.target;
-    setState((prevState: any) => ({ ...prevState, [name]: value }));
+    setter((prev: any) => ({ ...prev, [name]: value }));
   };
-  
-  const handleSignupSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+
+  const handleLoginSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setSignupInfo({ email: "", password: "", confirmPassword: "" }); // Clear any previous error messages
-    console.log('Signup Info:', JSON.stringify(signupInfo, null, 2));
-    alert('Signup successful!');
-
-  // Check if all fields are filled
-  if (!signupInfo.email || !signupInfo.password || !signupInfo.confirmPassword) {
-      console.error("All fields are required.");
-      alert("Please fill in all fields.");
-      return;
-    }
-  
-    // Check if passwords match
-    if (signupInfo.password !== signupInfo.confirmPassword) {
-      console.error("Passwords do not match.");
-      alert("Passwords do not match. Please try again.");
-      return;
-    }
-  
-    // Check password strength (example: minimum 8 characters)
-    if (signupInfo.password.length < 8) {
-      console.error("Password must be at least 8 characters long.");
-      alert("Password must be at least 8 characters long.");
-      return;
-    }
-  
-    // Proceed with signup logic
-   setErrorMessage(null); // Clear any previous error messages
-    const success = await AuthService.authenticateUser(signupInfo.email, signupInfo.password);
-
+    const success = await AuthService.authenticateUser(loginInfo.email, loginInfo.password);
     if (success) {
-      alert('Signup successful!');
-      setSignupInfo({ email: '', password: '', confirmPassword: '' }); // Clear form fields
+      alert("Login successful!");
+      setLoginInfo({ email: "", password: "" });
     } else {
-      setErrorMessage('Signup failed. Please try again.');
-    }
-  };
-  
-  const handleLoginSubmit = async (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      console.log("Login Info:", JSON.stringify(loginInfo, null, 2)); // Accessing loginInfo from state
-    
-      const success = await AuthService.authenticateUser(loginInfo.email, loginInfo.password);
-
-    if (success) {
-      alert('Login successful!');
-      setLoginInfo({ email: '', password: '' }); // Clear form fields
-    } else {
-      setErrorMessage('Invalid email or password.');
+      navigate("/error", { state: { message: "Invalid email or password." } });
     }
   };
 
-const handleHomeClick = () => {
-  navigate('/');
-};
+  const handleSignupSubmit = async (e: FormEvent) => {
+    e.preventDefault();
 
-return (
-  <div className="auth-page">
-    <h1> Let The Adventure Begin </h1>
-    {errorMessage && <p className="error-message">{errorMessage}</p>}
-    <div className="auth-forms">
-      <form onSubmit={handleLoginSubmit}>
-        
-                <input
+    const { email, password, confirmPassword } = signupInfo;
+
+    if (!email || !password || !confirmPassword) {
+      navigate("/error", { state: { message: "All fields are required." } });
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      navigate("/error", { state: { message: "Passwords do not match." } });
+      return;
+    }
+
+    if (password.length < 8) {
+      navigate("/error", { state: { message: "Password must be at least 8 characters long." } });
+      return;
+    }
+
+    const success = await AuthService.authenticateUser(email, password);
+
+    if (success) {
+      alert("Signup successful!");
+      setSignupInfo({ email: "", password: "", confirmPassword: "" });
+      setIsLogin(true); 
+    } else {
+      navigate("/error", { state: { message: "Signup failed. Try again." } });
+    }
+  };
+
+  return (
+    <div className="auth-page">
+      
+      <button className="home-button" onClick={() => navigate("/")}>Home</button>
+
+      <h1>{isLogin ? "Login" : "Sign Up"}</h1>
+
+      <form onSubmit={isLogin ? handleLoginSubmit : handleSignupSubmit} className="auth-form">
+        <input
           type="email"
           name="email"
           placeholder="Email"
-          value={loginInfo.email}
-          onChange={(e) => handleChange(e, setLoginInfo)}
+          value={isLogin ? loginInfo.email : signupInfo.email}
+          onChange={(e) => handleChange(e, isLogin ? setLoginInfo : setSignupInfo)}
+          required
         />
         <input
           type="password"
           name="password"
           placeholder="Password"
-          value={loginInfo.password}
-          onChange={(e) => handleChange(e, setLoginInfo)}
+          value={isLogin ? loginInfo.password : signupInfo.password}
+          onChange={(e) => handleChange(e, isLogin ? setLoginInfo : setSignupInfo)}
+          required
         />
-        <button type="submit">Login</button>
+        {!isLogin && (
+          <input
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={signupInfo.confirmPassword}
+            onChange={(e) => handleChange(e, setSignupInfo)}
+            required
+          />
+        )}
+        <button type="submit">{isLogin ? "Click here to Login" : "Click here to Sign Up"}</button>
       </form>
-      <form onSubmit={handleSignupSubmit}>
-        
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={signupInfo.email}
-          onChange={(e) => handleChange(e, setSignupInfo)}
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={signupInfo.password}
-          onChange={(e) => handleChange(e, setSignupInfo)}
-        />
-        <input
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm Password"
-          value={signupInfo.confirmPassword}
-          onChange={(e) => handleChange(e, setSignupInfo)}
-        />
-        <button type="submit">Sign Up</button>
-      </form>
+
+      <p className="toggle-mode">
+        {isLogin ? (
+          <>
+            Don't have an account?{" "}
+            <button onClick={() => setIsLogin(false)}>Click here to Sign Up</button>
+          </>
+        ) : (
+          <>
+            Already have an account?{" "}
+            <button onClick={() => setIsLogin(true)}>Click here to Login</button>
+          </>
+        )}
+      </p>
     </div>
-    <button onClick={handleHomeClick}>Go to Home</button>
-  </div>
-);
-};
+  );
+}
