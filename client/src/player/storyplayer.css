@@ -21,107 +21,57 @@ body {
 }
 
 /* Container for the story player */
-.p-4,
-.p-6 {
-  padding: 1.5rem; /* 24px */
-}
-
-.border {
-  border: 1px solid var(--secondary-color);
-}
-
-.rounded {
+.story-player-container {
+  padding: 2rem;
+  background-color: var(--background-color);
   border-radius: var(--border-radius);
-}
-
-.shadow {
   box-shadow: var(--shadow);
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 /* Heading styling */
-.text-xl {
-  font-size: 1.25rem; /* 20px */
+.story-player-container h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
 }
 
-.font-bold {
-  font-weight: bold;
-}
-
-.mb-4 {
-  margin-bottom: 1rem; /* 16px */
-}
-
-.mb-6 {
-  margin-bottom: 1.5rem; /* 24px */
-}
-
-/* Text styling */
-.whitespace-pre-wrap {
-  white-space: pre-wrap;
-}
-
-.italic {
-  font-style: italic;
-}
-
-.text-gray-600 {
-  color: var(--button-hover-color);
-}
-
-.text-sm {
-  font-size: 0.875rem; /* 14px */
-}
-
-.underline {
-  text-decoration: underline;
+/* Paragraph styling */
+.story-player-container p {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 /* Button styling */
-button {
-  font-family: var(--font-family);
-  cursor: pointer;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: var(--border-radius);
+.story-player-container button {
+  padding: 0.75rem 1.5rem;
   font-size: 1rem;
-  transition: background-color 0.3s ease;
-}
-
-.bg-gray-600 {
-  background-color: var(--button-hover-color);
-  color: #ffffff;
-}
-
-.bg-gray-600:hover {
-  background-color: #3a3a3a; /* Darker gray */
-}
-
-.bg-blue-500 {
+  font-weight: bold;
+  color: var(--text-color);
   background-color: var(--primary-color);
-  color: #ffffff;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 0.5rem;
 }
 
-.bg-blue-500:hover {
-  background-color: #4a4ae3; /* Slightly darker teal */
+.story-player-container button:hover {
+  background-color: var(--secondary-color);
 }
 
-.mt-4 {
-  margin-top: 1rem; /* 16px */
-}
-
-.mt-6 {
-  margin-top: 1.5rem; /* 24px */
-}
-
-/* Flexbox utilities */
-.flex {
+/* Choices container */
+.choices-container {
   display: flex;
-}
-
-.flex-col {
   flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
-.gap-2 {
-  gap: 0.5rem; /* 8px */
+/* No choices message */
+.no-choices {
+  font-style: italic;
+  color: var(--button-hover-color);
 }

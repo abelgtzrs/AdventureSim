@@ -1,5 +1,4 @@
 /* Root variables for consistent theming */
-/* Root variables for consistent theming */
 :root {
   --primary-color: #5e60ce; /* Teal */
   --secondary-color: #f72585; /* Pink */
@@ -18,15 +17,6 @@ body {
   line-height: 1.6;
 }
 
-/* Error page styling */
-.display-2 {
-  font-size: 2rem;
-  font-weight: bold;
-  color: var(--secondary-color);
-  text-align: center;
-  margin-top: 2rem;
-}
-
 /* Router container */
 .router-container {
   display: flex;
@@ -35,40 +25,30 @@ body {
   justify-content: center;
   min-height: 100vh;
   padding: 1rem;
-}/* Root variables for consistent theming */
-:root {
-  --primary-color: #5e60ce; /* Teal */
-  --secondary-color: #f72585; /* Pink */
-  --background-color: #1d1c1d; /* Dark background */
-  --text-color: #ffffff; /* White text */
-  --font-family: 'Arial', sans-serif;
 }
 
-/* General body styling */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: var(--font-family);
-  background-color: var(--background-color);
+/* Error message styling */
+.display-2 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--secondary-color);
+  text-align: center;
+  margin-top: 2rem;
+}
+
+/* Button styling */
+button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
   color: var(--text-color);
-  line-height: 1.6;
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-/* Error page styling */
-.display-2 {
-  font-size: 2rem;
-  font-weight: bold;
-  color: var(--secondary-color);
-  text-align: center;
-  margin-top: 2rem;
-}
-
-/* Router container */
-.router-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 1rem;
+button:hover {
+  background-color: var(--secondary-color);
 }

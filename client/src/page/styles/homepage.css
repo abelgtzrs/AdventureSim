@@ -1,33 +1,31 @@
+
 /* Root variables for consistent theming */
 :root {
   --primary-color: #5e60ce; /* Teal */
   --secondary-color: #f72585; /* Pink */
   --background-color: #1d1c1d; /* Dark background */
   --text-color: #ffffff; /* White text */
+  --font-family: 'Arial', sans-serif;
+  --border-radius: 8px;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* General body styling */
 body {
-  background-color: var(--background-color);
-  color: var(--text-color);
-  font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-}
-
-/* Container for the entire page */
-div {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
 }
 
 /* Header styling */
 header {
   background-color: var(--primary-color);
-  color: var(--text-color);
   padding: 1rem;
   text-align: center;
+  color: var(--text-color);
 }
 
 header h1 {
@@ -35,26 +33,28 @@ header h1 {
   margin: 0;
 }
 
-nav {
-  margin-top: 0.5rem;
-}
-
-nav a {
-  color: var(--text-color);
-  text-decoration: none;
-  margin: 0 1rem;
-  font-weight: bold;
-}
-
-nav a:hover {
-  color: var(--secondary-color);
-}
-
 /* Main content styling */
 main {
-  flex: 1;
   padding: 2rem;
-  background-color: var(--background-color);
+  text-align: center;
+}
+
+/* Button styling */
+button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--text-color);
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+}
+
+button:hover {
+  background-color: var(--secondary-color);
 }
 
 /* Footer styling */
@@ -63,6 +63,9 @@ footer {
   color: var(--text-color);
   text-align: center;
   padding: 1rem;
+  position: relative;
+  bottom: 0;
+  width: 100%;
 }
 
 footer p {

@@ -7,6 +7,8 @@
   --input-background: #2d2d2d; /* Darker input background */
   --input-border: #444444; /* Input border color */
   --font-family: 'Arial', sans-serif;
+  --border-radius: 8px;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* General body styling */
@@ -20,22 +22,16 @@ body {
 }
 
 /* Container for the login and signup sections */
-div {
-  display: flex;
-  justify-content: center;
-  gap: 50px;
-  padding: 2rem;
-}
-
-/* Section styling */
 section {
-  background-color: var(--input-background);
+  margin: 2rem auto;
   padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 300px;
+  max-width: 400px;
+  background-color: var(--input-background);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
 }
 
+/* Heading styling */
 section h1 {
   font-size: 1.5rem;
   margin-bottom: 1rem;
@@ -58,7 +54,7 @@ form label {
 form input {
   padding: 0.5rem;
   border: 1px solid var(--input-border);
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   background-color: var(--background-color);
   color: var(--text-color);
   font-size: 1rem;
@@ -71,31 +67,26 @@ form input:focus {
 }
 
 /* Button styling */
-form button {
-  background-color: var(--primary-color);
-  color: var(--text-color);
-  border: none;
-  padding: 0.75rem;
-  border-radius: 4px;
-  cursor: pointer;
+button {
+  padding: 0.75rem 1.5rem;
   font-size: 1rem;
   font-weight: bold;
+  color: var(--text-color);
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-form button:hover {
+button:hover {
   background-color: var(--secondary-color);
 }
 
-/* Utility classes */
-.text-center {
-  text-align: center;
-}
-
-.mt-4 {
-  margin-top: 1rem;
-}
-
-.mb-4 {
+/* Home button styling */
+button:first-of-type {
   margin-bottom: 1rem;
+  display: block;
+  width: 100%;
+  text-align: center;
 }

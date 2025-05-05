@@ -1,12 +1,12 @@
 import { type JwtPayload, jwtDecode } from 'jwt-decode';
 
 interface ExtendedJwt extends JwtPayload {
-  data:{
-    username:string,
-    email:string,
-    _id:string
-  }
-};
+  data: {
+    username: string;
+    email: string;
+    _id: string;
+  };
+}
 
 class AuthService {
   getProfile() {
@@ -43,6 +43,23 @@ class AuthService {
   logout() {
     localStorage.removeItem('id_token');
     window.location.assign('/');
+  }
+
+  async authenticateUser(email: string, password: string): Promise<boolean> {
+    try {
+      // Simulate an API call to validate login credentials
+      if (email === 'nita9801@abc.com' && password === 'Admin123!') {
+        const fakeToken = 'your-jwt-token'; // Replace with a real token from your backend
+        this.login(fakeToken);
+        return true;
+      } else {
+        console.error('Invalid email or password.');
+        return false;
+      }
+    } catch (err) {
+      console.error('Error during authentication:', err);
+      return false;
+    }
   }
 }
 
