@@ -25,7 +25,7 @@ header {
   background-color: var(--primary-color);
   padding: 1rem;
   text-align: center;
-  color: var(--text-color);
+  color: var(--secondary-color);
 }
 
 header h1 {
@@ -71,4 +71,22 @@ footer {
 footer p {
   margin: 0;
   font-size: 0.875rem;
+}
+/* Center the homepage container */
+.homepage-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+  background-color: #f5f5f5; /* Optional background color */
+}
+
+/* Style the logo */
+.homepage-logo {
+  display: block;
+  margin: 0 auto;
+  width: 400px; /* Adjust as needed */
+  height: auto;
 }

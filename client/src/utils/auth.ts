@@ -47,8 +47,8 @@ class AuthService {
 
   async authenticateUser(email: string, password: string): Promise<boolean> {
     try {
-      // Replace this URL with your backend's login endpoint
-      const response = await fetch('https://your-backend-url.com/api/login', {
+      // Replace this URL with your bacloginkend's login endpoint
+      const response = await fetch('http://localhost:5000/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,5 +1,6 @@
 import { useNavigate, Outlet } from 'react-router-dom';
 import './styles/homepage.css';
+import logo from '../assets/logo.png';
 
 const HomePage = () => {
   const navigate = useNavigate(); // Hook to programmatically navigate
@@ -12,9 +13,11 @@ const HomePage = () => {
     return (
       <div>
         <header>
-          <h1>AdventureSim</h1>
+          <h1>Your Story * Your Choice * You Choose</h1>
         </header>
         <main>
+           {/* Add the logo */}
+           <img src={logo} alt="AdventureSim Logo" className="homepage-logo" />
           {/* Button to navigate to the login-signup page */}
           <button onClick={handleLoginSignUpClick}>Go to Login/Sign Up</button>
           {/* Renders the child routes */}
