@@ -1,74 +1,62 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './styles/storyPlayer.css';
+import React from "react";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@apollo/client";
+import { GET_ADVENTURE_SESSION } from "../graphql/queries";
+import "./storyplayer.css";
 
-interface Choice {
+interface Entry {
   text: string;
-  nextSceneId: number | null;
+  createdAt: string;
 }
 
-interface Scene {
-  id: number;
-  description: string;
-  choices: Choice[];
+interface AdventureSession {
+  title: string;
+  category: string;
+  isActive: boolean;
+  entries: Entry[];
 }
 
-interface Props {
-  scenes: Scene[];
-  onExit: () => void;
-}
-
-const StoryPlayer: React.FC<Props> = ({ scenes, onExit }) => {
-  const [currentSceneId, setCurrentSceneId] = useState<number | null>(
-    scenes[0]?.id ?? null
-  );
-  const navigate = useNavigate(); // Hook to programmatically navigate
-
-  const currentScene = scenes.find((scene) => scene.id === currentSceneId);
-
-  const handleHomeClick = () => {
-    navigate('/'); // Navigate back to the home page
+const parseExtras = (text: string) => {
+  const chaosMatch = text.match(/Chaos Rating: (\d+)/);
+  const achievementMatch = text.match(/Achievement Unlocked: (.+)/);
+  return {
+    chaos: chaosMatch ? parseInt(chaosMatch[1]) : null,
+    achievement: achievementMatch ? achievementMatch[1] : null,
   };
+};
 
-  const handleLogoutClick = () => {
-    localStorage.removeItem('id_token'); // Clear the token from local storage
-    navigate('/logIn-signUp'); // Navigate to the login page
-  };
+const StoryPlayer: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const { loading, error, data } = useQuery(GET_ADVENTURE_SESSION, {
+    variables: { id },
+  });
 
-  if (!currentScene) {
-    return (
-      <div>
-        <p>Story over or missing starting scene.</p>
-        <button onClick={onExit}>Back to Editor</button>
-        <button onClick={handleHomeClick}>Home</button>
-        <button onClick={handleLogoutClick}>Logout</button>
-      </div>
-    );
-  }
+  if (loading) return <p>Loading story...</p>;
+  if (error) return <p>Error loading story.</p>;
+
+  const session: AdventureSession = data.getAdventureSession;
 
   return (
-    <div>
-      <h2>Scene {currentScene.id}</h2>
-      <p>{currentScene.description}</p>
+    <div className="story-player-container">
+      <h1>{session.title}</h1>
+      <p>Category: {session.category}</p>
 
-      {currentScene.choices.length === 0 ? (
-        <p>No choices available. The story ends here.</p>
-      ) : (
-        <div>
-          {currentScene.choices.map((choice, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentSceneId(choice.nextSceneId)}
-            >
-              {choice.text}
-            </button>
-          ))}
-        </div>
-      )}
-
-      <button onClick={onExit}>Back to Editor</button>
-      <button onClick={handleHomeClick}>Home</button>
-      <button onClick={handleLogoutClick}>Logout</button>
+      <div className="story-entries">
+        {session.entries.map((entry, index) => {
+          const { chaos, achievement } = parseExtras(entry.text);
+          return (
+            <div key={index} className="entry-block">
+              <p className="narrative-text">{entry.text}</p>
+              {chaos !== null && (
+                <p className="chaos-rating">🌀 Chaos Rating: {chaos}</p>
+              )}
+              {achievement && (
+                <p className="achievement">🏆 Achievement: {achievement}</p>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

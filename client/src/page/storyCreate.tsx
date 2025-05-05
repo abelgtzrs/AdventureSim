@@ -1,72 +1,63 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import PromptSelector from '../prompts/promptselector';
-import StoryPlayer from '../player/storyPlayer';
-import './storyCreate.css';
-
-interface Choice {
-  text: string;
-  nextSceneId: number | null;
-}
-
-interface Scene {
-  id: number;
-  description: string;
-  choices: Choice[];
-}
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useMutation } from "@apollo/client";
+import { START_ADVENTURE } from "../graphql/mutations";
+import PromptSelector from "../prompts/promptselector";
+import "./storyCreate.css";
 
 const StoryCreator: React.FC = () => {
-  const [scenes, setScenes] = useState<Scene[]>([]);
-  const [currentSceneId, setCurrentSceneId] = useState<number | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [selectedPrompt, setSelectedPrompt] = useState<string | null>(null);
-  const navigate = useNavigate(); // Hook to programmatically navigate
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState<string | null>(null);
+  const [startAdventure, { loading, error }] = useMutation(START_ADVENTURE);
+  const navigate = useNavigate();
 
-  const startStoryFromPrompt = (prompt: string) => {
-    const introScene: Scene = {
-      id: Date.now(),
-      description: prompt,
-      choices: [],
-    };
-    setScenes([introScene]);
-    setCurrentSceneId(introScene.id);
-    setSelectedPrompt(prompt);
-  };
-
-  const handleHomeClick = () => {
-    navigate('/'); // Navigate back to the home page
-  };
-  // Navigate to the login page
+  const handleHomeClick = () => navigate("/");
   const handleLogoutClick = () => {
-    localStorage.removeItem('id_token'); 
-    navigate('/logIn-signUp'); 
+    localStorage.removeItem("id_token");
+    navigate("/logIn-signUp");
   };
 
-  if (!selectedPrompt) {
-    return <PromptSelector onSelect={startStoryFromPrompt} />;
-  }
-
-  if (isPlaying) {
-    return (
-      <StoryPlayer scenes={scenes} onExit={() => setIsPlaying(false)} />
-    );
-  }
-
-  const addScene = () => {
-    const newScene = {
-      id: Date.now(),
-      description: '',
-      choices: [],
-    };
-    setScenes([...scenes, newScene]);
+  const handleStartAdventure = async () => {
+    if (!title || !category) return;
+    try {
+      const { data } = await startAdventure({
+        variables: { title, category },
+      });
+      const newId = data.startAdventure.id;
+      navigate(`/adventure/${newId}`);
+    } catch (err) {
+      console.error("Error starting adventure:", err);
+    }
   };
 
   return (
-    <div>
-      <h1>Story Builder</h1>
+    <div className="story-create-container">
+      <h1>Create Your Adventure</h1>
       <button onClick={handleHomeClick}>Home</button>
       <button onClick={handleLogoutClick}>Logout</button>
-      <button onClick={addScene}>Add Scene</button>
+
+      <div className="form-group">
+        <label>Story Title:</label>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Enter your story's title"
+        />
+      </div>
+
+      <PromptSelector onSelect={setCategory} />
+
+      <button
+        onClick={handleStartAdventure}
+        disabled={!title || !category || loading}
+      >
+        {loading ? "Starting..." : "Start Adventure"}
+      </button>
+
+      {error && (
+        <p className="error">Failed to start story. Please try again.</p>
+      )}
     </div>
   );
 };
