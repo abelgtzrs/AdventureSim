@@ -1,19 +1,22 @@
-import { Link, useNavigate, Outlet } from 'react-router-dom';
+import { useNavigate, Outlet } from 'react-router-dom';
 import './styles/homepage.css';
+
 const HomePage = () => {
   const navigate = useNavigate(); // Hook to programmatically navigate
+
+  const handleLoginSignUpClick = () => {
+    navigate('/logIn-signUp'); // Navigate to the login-signup page
+  };
 
   const App = () => {
     return (
       <div>
         <header>
           <h1>AdventureSim</h1>
-          <nav>
-            <Link to="/">Home</Link>
-            {/* Removed AuthPage link from navigation */}
-          </nav>
         </header>
         <main>
+          {/* Button to navigate to the login-signup page */}
+          <button onClick={handleLoginSignUpClick}>Go to Login/Sign Up</button>
           {/* Renders the child routes */}
           <Outlet />
         </main>
@@ -23,8 +26,6 @@ const HomePage = () => {
       </div>
     );
   };
-  
- 
 
   return <App />;
 };

@@ -1,4 +1,5 @@
 import { useState, ChangeEvent, FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import './styles/login-signup.css';
 
 interface LoginInfo {
@@ -13,6 +14,8 @@ interface SignupInfo {
 }
 
 export default function AuthPage() {
+  const navigate = useNavigate(); // Hook to programmatically navigate
+
   const [loginInfo, setLoginInfo] = useState<LoginInfo>({
     email: "",
     password: "",
@@ -46,8 +49,15 @@ export default function AuthPage() {
     console.log("Signup Info:", signupInfo);
   };
 
+  const handleHomeClick = () => {
+    navigate('/'); // Navigate back to the home page
+  };
+
   return (
     <div>
+      {/* Home Button */}
+      <button onClick={handleHomeClick}>Home</button>
+      
       {/* Login Section */}
       <section>
         <h1>Login</h1>

@@ -1,4 +1,4 @@
-import { useRouteError } from 'react-router-dom';
+import { useRouteError, useNavigate } from 'react-router-dom';
 
 interface RouteError {
   statusText?: string;
@@ -7,6 +7,12 @@ interface RouteError {
 
 export default function ErrorPage() {
   const error = useRouteError() as RouteError;
+  const navigate = useNavigate(); // Hook to programmatically navigate
+
+  const handleHomeClick = () => {
+    navigate('/'); // Navigate back to the home page
+  };
+
   console.error(error);
 
   return (
@@ -16,6 +22,7 @@ export default function ErrorPage() {
       <p>
         <i>{error.statusText || error.message}</i>
       </p>
+      <button onClick={handleHomeClick}>Home</button>
     </div>
   );
 }

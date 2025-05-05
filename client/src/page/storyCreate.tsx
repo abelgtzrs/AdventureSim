@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PromptSelector from '../prompts/promptselector';
 import StoryPlayer from '../player/storyPlayer';
 import './storyCreate.css';
@@ -19,6 +20,7 @@ const StoryCreator: React.FC = () => {
   const [currentSceneId, setCurrentSceneId] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [selectedPrompt, setSelectedPrompt] = useState<string | null>(null);
+  const navigate = useNavigate(); // Hook to programmatically navigate
 
   const startStoryFromPrompt = (prompt: string) => {
     const introScene: Scene = {
@@ -29,6 +31,15 @@ const StoryCreator: React.FC = () => {
     setScenes([introScene]);
     setCurrentSceneId(introScene.id);
     setSelectedPrompt(prompt);
+  };
+
+  const handleHomeClick = () => {
+    navigate('/'); // Navigate back to the home page
+  };
+  // Navigate to the login page
+  const handleLogoutClick = () => {
+    localStorage.removeItem('id_token'); 
+    navigate('/logIn-signUp'); 
   };
 
   if (!selectedPrompt) {
@@ -53,6 +64,8 @@ const StoryCreator: React.FC = () => {
   return (
     <div>
       <h1>Story Builder</h1>
+      <button onClick={handleHomeClick}>Home</button>
+      <button onClick={handleLogoutClick}>Logout</button>
       <button onClick={addScene}>Add Scene</button>
     </div>
   );
