@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { START_ADVENTURE } from "../graphql/mutations";
 import PromptSelector from "../prompts/promptselector";
-import "./storyCreate.css";
+import "./styles/storyCreate.css";
 
 const StoryCreator: React.FC = () => {
   const [title, setTitle] = useState("");
