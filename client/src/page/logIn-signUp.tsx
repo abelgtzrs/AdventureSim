@@ -4,9 +4,15 @@ import './styles/login-signup.css';
 
 // Mock AuthService for demonstration purposes
 const AuthService = {
-  authenticateUser: async (email: string, password: string): Promise<boolean> => {
+  _authenticateUser: async (email: string, password: string): Promise<boolean> => {
     // Replace this with actual authentication logic
-    return email === "test@example.com" && password === "password123";
+    return email === "nit9801@abc.com" && password === "Admin123!";
+  },
+  get authenticateUser() {
+    return this._authenticateUser;
+  },
+  set authenticateUser(value) {
+    this._authenticateUser = value;
   },
 };
 
@@ -102,12 +108,12 @@ const handleHomeClick = () => {
 
 return (
   <div className="auth-page">
-    <h1>Login/Sign-Up</h1>
+    <h1> Let The Adventure Begin </h1>
     {errorMessage && <p className="error-message">{errorMessage}</p>}
     <div className="auth-forms">
       <form onSubmit={handleLoginSubmit}>
-        <h2>Login</h2>
-        <input
+        
+                <input
           type="email"
           name="email"
           placeholder="Email"
@@ -124,7 +130,7 @@ return (
         <button type="submit">Login</button>
       </form>
       <form onSubmit={handleSignupSubmit}>
-        <h2>Sign Up</h2>
+        
         <input
           type="email"
           name="email"
