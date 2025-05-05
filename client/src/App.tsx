@@ -1,5 +1,5 @@
-import './App.css'
-import StoryCreator from './storycreate/storyCreate'
+import "./App.css";
+import StoryCreator from "./storycreate/storyCreate";
 
 const App: React.FC = () => {
   return (
@@ -9,4 +9,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App
+export default App;
