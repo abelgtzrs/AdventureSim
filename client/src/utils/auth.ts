@@ -47,13 +47,27 @@ class AuthService {
 
   async authenticateUser(email: string, password: string): Promise<boolean> {
     try {
-      // Simulate an API call to validate login credentials
-      if (email === 'nita9801@abc.com' && password === 'Admin123!') {
-        const fakeToken = 'your-jwt-token'; // Replace with a real token from your backend
-        this.login(fakeToken);
+      // Replace this URL with your backend's login endpoint
+      const response = await fetch('https://your-backend-url.com/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        console.error('Failed to authenticate user.');
+        return false;
+      }
+
+      const data = await response.json();
+
+      if (data.token) {
+        this.login(data.token); // Store the token in local storage
         return true;
       } else {
-        console.error('Invalid email or password.');
+        console.error('No token received from backend.');
         return false;
       }
     } catch (err) {
