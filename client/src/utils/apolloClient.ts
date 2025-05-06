@@ -2,7 +2,7 @@ import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:3001/graphql", // Update for prod later
+  uri: "https://adventuresim.onrender.com/graphql", // Update for prod later
 });
 
 const authLink = setContext((_, { headers }) => {

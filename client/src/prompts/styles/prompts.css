@@ -49,6 +49,7 @@
   overflow: hidden;
 }
 
+/* ---------- label bar ---------- */
 .prompt-title {
   flex: 1; /* span full width of tile */
   display: flex; /* NEW: use flex to centre text */
