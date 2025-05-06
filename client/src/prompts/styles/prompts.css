@@ -50,14 +50,17 @@
 }
 
 .prompt-title {
-  flex: 1; /* fill full width of card */
-  text-align: center;
+  flex: 1; /* span full width of tile */
+  display: flex; /* NEW: use flex to centre text */
+  justify-content: center; /* centre horizontally */
+  align-items: center; /* centre vertically */
   padding: 0.75rem 0;
   background: rgba(0, 0, 0, 0.6);
   color: #fff;
   font-weight: 600;
   font-size: 1.05rem;
-  backdrop-filter: blur(2px);
   letter-spacing: 0.4px;
-  /* remove border‑radius here so bar spans edge‑to‑edge cleanly */
+  backdrop-filter: blur(2px);
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
 }
