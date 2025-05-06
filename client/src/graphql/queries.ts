@@ -14,15 +14,16 @@ export const GET_MY_ADVENTURE_SESSIONS = gql`
 `;
 
 export const GET_ADVENTURE_SESSION = gql`
-  query getAdventureSession($id: ID!) {
+  query GetAdventureSession($id: ID!) {
     getAdventureSession(id: $id) {
-      id
       title
       category
       isActive
       entries {
-        text
-        createdAt
+        prompt
+        response
+        chaosScore
+        timestamp
       }
     }
   }

@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ApolloProvider } from "@apollo/client";
 import client from "./utils/apolloClient"; // Make sure this path is correct
 import RootLayout from "./layout/RootLayout";
+import StoryPlayer from "./player/storyPlayer";
 import StoryCreate from "./page/storyCreate";
 
 // Pages
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
       { path: "/", element: <HomePage /> },
       { path: "logIn-signUp", element: <LoginSignUp /> },
       { path: "create", element: <StoryCreate /> },
+      { path: "adventure/:id", element: <StoryPlayer /> },
     ],
   },
 ]);

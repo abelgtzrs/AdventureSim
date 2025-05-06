@@ -1,77 +1,70 @@
-/* Root variables for consistent theming */
-:root {
-  --primary-color: #5e60ce; /* Teal */
-  --secondary-color: #f72585; /* Pink */
-  --background-color: #1d1c1d; /* Dark background */
-  --text-color: #ffffff; /* White text */
-  --button-hover-color: #4b5563; /* Darker gray for hover */
-  --font-family: 'Arial', sans-serif;
-  --border-radius: 8px;
-  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* General body styling */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: var(--font-family);
-  background-color: var(--background-color);
-  color: var(--text-color);
-  line-height: 1.6;
-}
-
-/* Container for the story player */
-.story-player-container {
-  padding: 2rem;
-  background-color: var(--background-color);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow);
-  max-width: 800px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-/* Heading styling */
-.story-player-container h2 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  color: var(--primary-color);
-}
-
-/* Paragraph styling */
-.story-player-container p {
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-}
-
-/* Button styling */
-.story-player-container button {
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: bold;
-  color: var(--text-color);
-  background-color: var(--primary-color);
-  border: none;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin: 0.5rem;
-}
-
-.story-player-container button:hover {
-  background-color: var(--secondary-color);
-}
-
-/* Choices container */
-.choices-container {
+.story-player {
   display: flex;
   flex-direction: column;
+  height: 100vh;
+}
+header {
+  display: flex;
+  align-items: center;
   gap: 1rem;
-  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: #222;
+  color: #fff;
+}
+.turn-indicator {
+  margin-left: auto;
+}
+.end-btn {
+  margin-left: 1rem;
+}
+.entry-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  background: #000000;
+}
+.entry-card {
+  background: #000000;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+}
+footer {
+  display: flex;
+  padding: 0.75rem;
+  background: #eee;
+}
+footer input {
+  flex: 1;
+  padding: 0.5rem;
+}
+footer button {
+  margin-left: 0.5rem;
+}
+.loader {
+  font-style: italic;
+  opacity: 0.7;
 }
 
-/* No choices message */
-.no-choices {
-  font-style: italic;
-  color: var(--button-hover-color);
+.user-msg {
+  margin: 0.25rem 0;
+}
+.ai-msg {
+  margin: 0.25rem 0;
+  font-weight: 500;
+}
+
+.entry-block {
+  background: #000000;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+}
+.chaos {
+  color: darkorange;
+  font-size: 0.9rem;
+}
+.ach {
+  color: seagreen;
+  font-size: 0.9rem;
 }

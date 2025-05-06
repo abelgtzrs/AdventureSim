@@ -32,22 +32,29 @@ export const START_ADVENTURE = gql`
 `;
 
 export const CONTINUE_ADVENTURE = gql`
-  mutation continueAdventure($sessionId: ID!, $input: String!) {
+  mutation ContinueAdventure($sessionId: ID!, $input: String!) {
     continueAdventure(sessionId: $sessionId, input: $input) {
       id
+      isActive
       entries {
-        text
-        createdAt
+        prompt
+        response
+        chaosScore
+        timestamp
       }
     }
   }
 `;
 
 export const END_ADVENTURE = gql`
-  mutation endAdventure($sessionId: ID!) {
+  mutation EndAdventure($sessionId: ID!) {
     endAdventure(sessionId: $sessionId) {
       id
       isActive
+      entries {
+        response
+        timestamp
+      }
     }
   }
 `;

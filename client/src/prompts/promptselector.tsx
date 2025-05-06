@@ -1,31 +1,30 @@
-import React, { useEffect, useState } from "react";
-import { storyPrompts } from "./storyPrompts";
-import "./prompts.css";
+import React from "react";
+import "./styles/prompts.css"; // Make sure this file exists
 
-interface Props {
-  onSelect: (prompt: string) => void;
-}
+const categories = [
+  { name: "Horror", image: "horror.jpg" },
+  { name: "Medieval", image: "medieval.jpg" },
+  { name: "Science-Fiction", image: "scifi.jpg" },
+  { name: "Post-Apocalyptic", image: "postapoc.jpg" },
+];
 
-const PromptSelector: React.FC<Props> = ({ onSelect }) => {
-  const [displayPrompts, setDisplayPrompts] = useState<string[]>([]);
-
-  useEffect(() => {
-    const shuffled = [...storyPrompts].sort(() => 0.5 - Math.random());
-    setDisplayPrompts(shuffled.slice(0, 3));
-  }, []);
-
+const PromptSelector: React.FC<{ onSelect: (category: string) => void }> = ({
+  onSelect,
+}) => {
   return (
-    <div className="container">
-      <h1 className="header">Choose a Story Prompt</h1>
-      <ul className="list">
-        {displayPrompts.map((prompt, index) => (
-          <li key={index}>
-            <button onClick={() => onSelect(prompt)} className="button">
-              {prompt}
-            </button>
-          </li>
-        ))}
-      </ul>
+    <div className="prompt-grid">
+      {categories.map(({ name, image }) => (
+        <button
+          key={name}
+          className="prompt-card"
+          style={{
+            backgroundImage: `url(/images/${image})`, // Customize path later
+          }}
+          onClick={() => onSelect(name)}
+        >
+          <span className="prompt-title">{name}</span>
+        </button>
+      ))}
     </div>
   );
 };
