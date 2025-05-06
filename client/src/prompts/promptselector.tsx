@@ -1,32 +1,34 @@
 import React from "react";
-import "./styles/prompts.css"; // Make sure this file exists
+import "./styles/prompts.css";
 
-const categories = [
-  { name: "Horror", image: "horror.jpg" },
-  { name: "Medieval", image: "medieval.jpg" },
-  { name: "Science-Fiction", image: "scifi.jpg" },
-  { name: "Post-Apocalyptic", image: "postapoc.jpg" },
-];
-
-const PromptSelector: React.FC<{ onSelect: (category: string) => void }> = ({
-  onSelect,
-}) => {
-  return (
-    <div className="prompt-grid">
-      {categories.map(({ name, image }) => (
-        <button
-          key={name}
-          className="prompt-card"
-          style={{
-            backgroundImage: `url(/images/${image})`, // Customize path later
-          }}
-          onClick={() => onSelect(name)}
-        >
-          <span className="prompt-title">{name}</span>
-        </button>
-      ))}
-    </div>
-  );
+type Props = {
+  onSelect: (cat: string) => void;
+  value?: string | null; // currently‑selected category
 };
 
-export default PromptSelector;
+const categories = [
+  { name: "Horror", img: "horror.png" },
+  { name: "Medieval", img: "medieval.png" },
+  { name: "Science‑Fiction", img: "scifi.png" },
+  { name: "Post‑Apocalyptic", img: "postapoc.png" },
+];
+
+export default function PromptSelector({ onSelect, value }: Props) {
+  return (
+    <div className="prompt-grid">
+      {categories.map(({ name, img }) => {
+        const selected = name === value;
+        return (
+          <button
+            key={name}
+            className={`prompt-card${selected ? " selected" : ""}`}
+            style={{ backgroundImage: `url(/public/${img})` }}
+            onClick={() => onSelect(name)}
+          >
+            <span className="prompt-title">{name}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}

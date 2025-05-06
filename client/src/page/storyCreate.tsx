@@ -33,12 +33,11 @@ const StoryCreator: React.FC = () => {
   return (
     <div className="story-create-container">
       <h1>Create Your Adventure</h1>
-      <button onClick={handleHomeClick}>Home</button>
-      <button onClick={handleLogoutClick}>Logout</button>
 
       <div className="form-group">
-        <label>Story Title:</label>
+        <label>Title</label>
         <input
+          id="title"
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -46,18 +45,25 @@ const StoryCreator: React.FC = () => {
         />
       </div>
 
-      <PromptSelector onSelect={setCategory} />
+      <PromptSelector onSelect={setCategory} value={category} />
 
-      <button
-        onClick={handleStartAdventure}
-        disabled={!title || !category || loading}
-      >
-        {loading ? "Starting..." : "Start Adventure"}
-      </button>
+      <div className="btn-row">
+        <button
+          className="btn-primary"
+          onClick={handleStartAdventure}
+          disabled={!title || !category || loading}
+        >
+          {loading ? "Starting…" : "Start Adventure"}
+        </button>
+        <button className="btn-secondary" onClick={handleHomeClick}>
+          Home
+        </button>
+        <button className="btn-secondary" onClick={handleLogoutClick}>
+          Logout
+        </button>
+      </div>
 
-      {error && (
-        <p className="error">Failed to start story. Please try again.</p>
-      )}
+      {error && <p className="error">Failed to start story.</p>}
     </div>
   );
 };
