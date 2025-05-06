@@ -1,0 +1,67 @@
+.prompt-grid {
+  display: grid;
+  gap: 1.2rem;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.prompt-card {
+  height: 180px;
+  background-size: cover;
+  background-position: center;
+  filter: grayscale(100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: filter 0.35s, transform 0.2s;
+  position: relative;
+}
+
+.prompt-card:hover {
+  filter: grayscale(0%);
+}
+
+.prompt-card.selected {
+  outline: 4px solid #2196f3;
+  filter: grayscale(0%);
+  transform: translateY(-3px);
+}
+
+.prompt-title {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 0.75rem 0;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+/* leave previous rules, then add / tweak these */
+
+.prompt-card {
+  position: relative; /* ensure absolute children anchor here */
+  display: flex; /* let title bar stretch full width */
+  align-items: flex-end; /* stick bar to bottom */
+  overflow: hidden;
+}
+
+/* ---------- label bar ---------- */
+.prompt-title {
+  flex: 1; /* span full width of tile */
+  display: flex; /* NEW: use flex to centre text */
+  justify-content: center; /* centre horizontally */
+  align-items: center; /* centre vertically */
+  padding: 0.75rem 0;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 0.4px;
+  backdrop-filter: blur(2px);
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
