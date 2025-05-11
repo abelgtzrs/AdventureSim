@@ -24,10 +24,10 @@
   transition: filter 300ms;
 }
 .logo:hover {
-  filter:var(--teal) drop-shadow(0 0 2em );
+  filter: var(--teal) drop-shadow(0 0 2em);
 }
 .logo.react:hover {
-  filter: var(--pink) drop-shadow(0 0 2em );
+  filter: var(--pink) drop-shadow(0 0 2em);
 }
 
 @keyframes logo-spin {

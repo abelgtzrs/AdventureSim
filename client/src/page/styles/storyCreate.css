@@ -1,37 +1,464 @@
-:root {
-  --pink: #f72585;
-  --teal: #5e60ce;
-  --background-color: #1d1c1dff;
-}
+/* styles/storyCreate.css - "The Chronicle Forge" Theme */
 
-.story-create-container {
-  max-width: 650px;
-  margin: 2rem auto;
-  padding: 2rem;
-  border: 1px solid #ddd;
-  border-radius: 12px;
+/* Assuming Genesis Deck :root variables are globally available or imported */
+/* If not, re-declare necessary ones:
+:root {
+  --genesis-bg: #0F172A;
+  --genesis-surface: #1E293B;
+  --genesis-border: #334155;
+  --genesis-primary-accent: #00CFDE;
+  --genesis-primary-accent-rgb: 0, 207, 222;
+  --genesis-primary-accent-darker: #00A9B8;
+  --genesis-text-primary: #F3F4F6;
+  --genesis-text-secondary: #9CA3AF;
+  --genesis-text-on-accent: #0A0D14;
+  --genesis-error: #FF4D4D;
+  --font-heading: "Syne", "Inter", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --spacing-unit: 8px;
+  --transition-duration: 0.3s;
+  --transition-cubic: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+}
+*/
+
+.chronicle-forge-page {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  min-height: 100vh;
+  background-color: var(--genesis-bg);
+  color: var(--genesis-text-primary);
+  font-family: var(--font-body);
 }
 
-.btn-primary {
-  background: #0077ff;
-  color: #fff;
-}
-.btn-secondary {
-  background: #555;
-  color: #fff;
+.forge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 3);
+  background-color: var(--genesis-surface);
+  border-bottom: 1px solid var(--genesis-border);
+  width: 100%;
+  box-sizing: border-box;
 }
 
-button {
-  padding: 0.55rem 1.2rem;
-  border: none;
-  border-radius: 8px;
+.forge-header h1 {
+  font-family: var(--font-heading);
+  font-size: 1.75rem; /* 28px */
+  font-weight: 700;
+  color: var(--genesis-text-primary);
+  margin: 0;
+  text-align: center;
+  flex-grow: 1; /* Allow title to center if buttons are present */
+}
+
+.forge-nav-button {
+  font-family: var(--font-heading);
+  background: none;
+  border: 1px solid transparent; /* Keep alignment, hide border */
+  color: var(--genesis-text-secondary);
+  padding: var(--spacing-unit) calc(var(--spacing-unit) * 1.5);
+  border-radius: var(--border-radius-md);
   cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color var(--transition-duration),
+    background-color var(--transition-duration);
+  white-space: nowrap;
+}
+.forge-nav-button.back-button {
+  /* Specific styling if needed */
+}
+.forge-nav-button.logout-button {
+  border-color: var(--genesis-text-secondary); /* More visible logout */
 }
 
-button:disabled {
-  opacity: 0.6;
+.forge-nav-button:hover {
+  color: var(--genesis-primary-accent);
+  border-color: var(--genesis-primary-accent); /* Show border on hover */
+}
+.forge-nav-button.logout-button:hover {
+  background-color: rgba(var(--genesis-primary-accent-rgb), 0.1);
+}
+
+.forge-main-content {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Align form to top */
+  padding: calc(var(--spacing-unit) * 3) calc(var(--spacing-unit) * 2);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.forge-form-container {
+  background-color: var(--genesis-surface);
+  padding: calc(var(--spacing-unit) * 3) calc(var(--spacing-unit) * 4);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--genesis-border);
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  max-width: 700px; /* Constrain form width */
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing-unit) * 3.5); /* 28px */
+}
+
+.forge-section {
+  /* Spacing handled by gap in .forge-form-container */
+}
+
+.forge-label {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 1.25rem; /* 20px */
+  font-weight: 600;
+  color: var(--genesis-text-primary);
+  margin-bottom: calc(var(--spacing-unit) * 1.5); /* 12px */
+  display: flex;
+  align-items: center;
+}
+
+.forge-label .label-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background-color: var(--genesis-primary-accent);
+  color: var(--genesis-text-on-accent);
+  border-radius: 50%;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-right: var(--spacing-unit);
+  line-height: 1; /* Ensure number is centered */
+}
+
+.forge-input-title {
+  width: 100%;
+  padding: calc(var(--spacing-unit) * 1.5) calc(var(--spacing-unit) * 2); /* 12px 16px */
+  background-color: var(--genesis-bg); /* Darker input bg for contrast */
+  border: 1px solid var(--genesis-border);
+  border-radius: var(--border-radius-md);
+  color: var(--genesis-text-primary);
+  font-size: 1.1rem; /* 17-18px */
+  font-family: var(--font-body);
+  box-sizing: border-box;
+  transition: border-color var(--transition-duration),
+    box-shadow var(--transition-duration);
+}
+.forge-input-title::placeholder {
+  color: var(--genesis-text-secondary);
+  opacity: 0.7;
+}
+.forge-input-title:focus {
+  outline: none;
+  border-color: var(--genesis-primary-accent);
+  box-shadow: 0 0 0 3px rgba(var(--genesis-primary-accent-rgb), 0.25);
+}
+
+/* Styling for PromptSelector Area */
+/* This assumes PromptSelector renders its own items (buttons/cards) */
+/* You'll need to adapt these if PromptSelector is just a <select> */
+.category-section .prompt-selector-container {
+  /* Example class for PromptSelector's wrapper */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--spacing-unit) * 1.5; /* 12px */
+}
+
+/* Example style for individual prompt/category buttons from PromptSelector */
+.prompt-selector-container .category-button {
+  padding: calc(var(--spacing-unit) * 1.5) var(--spacing-unit);
+  background-color: var(--genesis-bg); /* Darker button */
+  border: 1px solid var(--genesis-border);
+  color: var(--genesis-text-secondary);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  text-align: center;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  transition: all var(--transition-duration) var(--transition-cubic);
+}
+.prompt-selector-container .category-button:hover {
+  border-color: var(--genesis-primary-accent);
+  color: var(--genesis-primary-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(var(--genesis-primary-accent-rgb), 0.2);
+}
+.prompt-selector-container .category-button.selected {
+  /* Add this class via JS in PromptSelector */
+  background-color: var(--genesis-primary-accent);
+  color: var(--genesis-text-on-accent);
+  border-color: var(--genesis-primary-accent);
+  box-shadow: 0 0 10px rgba(var(--genesis-primary-accent-rgb), 0.3);
+  font-weight: 700;
+}
+
+.forge-error-message {
+  background-color: rgba(
+    var(--genesis-error-rgb, 255, 77, 77),
+    0.1
+  ); /* Need --genesis-error-rgb */
+  color: var(--genesis-error);
+  padding: var(--spacing-unit) calc(var(--spacing-unit) * 1.5);
+  border-radius: var(--border-radius-md);
+  margin-top: calc(var(--spacing-unit) * 0.5); /* Space from inputs */
+  margin-bottom: var(--spacing-unit); /* Space before button */
+  font-size: 0.9rem;
+  border: 1px solid rgba(var(--genesis-error-rgb, 255, 77, 77), 0.3);
+  text-align: center;
+}
+:root {
+  --genesis-error-rgb: 255, 77, 77;
+}
+
+.action-section {
+  margin-top: var(--spacing-unit); /* Add some space before the main button */
+  text-align: center; /* Center the button */
+}
+
+.forge-button-primary.start-adventure-button {
+  font-family: var(--font-heading);
+  font-size: 1.2rem; /* 19-20px */
+  font-weight: 700;
+  padding: calc(var(--spacing-unit) * 1.75) calc(var(--spacing-unit) * 4); /* 14px 32px */
+  background-color: var(--genesis-primary-accent);
+  color: var(--genesis-text-on-accent);
+  border-radius: var(--border-radius-lg); /* Larger radius for main CTA */
+  box-shadow: 0 4px 20px rgba(var(--genesis-primary-accent-rgb), 0.35);
+  transition: all var(--transition-duration) var(--transition-cubic);
+  width: 100%;
+  max-width: 350px; /* Max width for the button itself */
+}
+.forge-button-primary.start-adventure-button:hover {
+  background-color: var(--genesis-primary-accent-darker);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 7px 25px rgba(var(--genesis-primary-accent-rgb), 0.45);
+}
+.forge-button-primary.start-adventure-button:disabled {
+  background-color: var(--genesis-border);
+  color: var(--genesis-text-secondary);
+  box-shadow: none;
+  transform: none;
   cursor: not-allowed;
+}
+.forge-button-primary.start-adventure-button .button-spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border: 2px solid rgba(var(--genesis-text-on-accent-rgb, 10, 13, 20), 0.3); /* Need --genesis-text-on-accent-rgb */
+  border-left-color: var(--genesis-text-on-accent);
+  border-radius: 50%;
+  animation: genesis-spin 0.6s linear infinite;
+  margin-right: calc(var(--spacing-unit) * 0.75);
+  vertical-align: middle; /* Align spinner with text */
+}
+/* Add to :root: --genesis-text-on-accent-rgb: 10, 13, 20; */
+@keyframes genesis-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.forge-footer {
+  text-align: center;
+  padding: calc(var(--spacing-unit) * 2.5) var(--spacing-unit); /* 20px */
+  margin-top: auto; /* Pushes to bottom if content is short */
+  background-color: var(--genesis-surface);
+  border-top: 1px solid var(--genesis-border);
+  color: var(--genesis-text-secondary);
+  font-size: 0.875rem; /* 14px */
+}
+.forge-footer p {
+  margin: 0;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+  /* Mobile */
+  .forge-header {
+    padding: var(--spacing-unit) calc(var(--spacing-unit) * 1.5);
+    flex-direction: column; /* Stack header items on mobile */
+    gap: var(--spacing-unit);
+  }
+  .forge-header h1 {
+    font-size: 1.5rem; /* 24px */
+    order: -1; /* Title first */
+  }
+  .forge-nav-button {
+    font-size: 0.85rem;
+    padding: calc(var(--spacing-unit) * 0.75) var(--spacing-unit);
+  }
+  .forge-nav-button.back-button {
+    position: absolute;
+    top: var(--spacing-unit);
+    left: var(--spacing-unit);
+  }
+  .forge-nav-button.logout-button {
+    position: absolute;
+    top: var(--spacing-unit);
+    right: var(--spacing-unit);
+  }
+
+  .forge-main-content {
+    padding: calc(var(--spacing-unit) * 2) var(--spacing-unit);
+  }
+  .forge-form-container {
+    padding: calc(var(--spacing-unit) * 2.5) calc(var(--spacing-unit) * 2);
+    gap: calc(var(--spacing-unit) * 2.5);
+  }
+  .forge-label {
+    font-size: 1.1rem; /* 17-18px */
+  }
+  .forge-label .label-number {
+    width: 24px;
+    height: 24px;
+    font-size: 0.8rem;
+  }
+  .forge-input-title {
+    font-size: 1rem;
+    padding: var(--spacing-unit) calc(var(--spacing-unit) * 1.5);
+  }
+
+  /* Assuming category buttons might need to stack */
+  .category-section .prompt-selector-container {
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(120px, 1fr)
+    ); /* Smaller min for buttons */
+    gap: var(--spacing-unit);
+  }
+  .prompt-selector-container .category-button {
+    padding: var(--spacing-unit);
+  }
+
+  .forge-button-primary.start-adventure-button {
+    font-size: 1.1rem;
+    padding: calc(var(--spacing-unit) * 1.5) calc(var(--spacing-unit) * 3);
+  }
+}
+/* styles/storyCreate.css - "The Chronicle Forge" Theme */
+
+/* ... (Keep all :root variables and existing .chronicle-forge-page, .forge-header, .forge-main-content,
+        .forge-form-container, .forge-section, .forge-label, .forge-input-title,
+        .forge-error-message, .action-section, .forge-button-primary, .forge-footer styles from the previous response) ... */
+
+/* --- Styling for PromptSelector Area (Category Selection) --- */
+.category-section {
+  /* This class is on the <section> in StoryCreator.tsx */
+  /* No specific styles needed here unless you want to change its spacing from other sections,
+     which is already handled by the gap in .forge-form-container */
+}
+
+.forge-category-grid {
+  /* Was: .prompt-grid in PromptSelector.tsx */
+  display: grid;
+  /* Responsive columns: 1 on very small, 2 on mobile, up to 4 on desktop */
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: calc(var(--spacing-unit) * 2); /* 16px */
+}
+
+.forge-category-card {
+  /* Was: .prompt-card */
+  aspect-ratio: 3 / 4; /* Maintain a consistent card shape */
+  border-radius: var(--border-radius-md);
+  border: 2px solid var(--genesis-border);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative; /* For overlay and title positioning */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* Aligns title to the bottom */
+  align-items: center;
+  padding: var(--spacing-unit);
+  cursor: pointer;
+  overflow: hidden; /* Ensure pseudo-elements/overlays don't spill */
+  transition: transform var(--transition-duration) var(--transition-cubic),
+    box-shadow var(--transition-duration) var(--transition-cubic),
+    border-color var(--transition-duration) var(--transition-cubic);
+  text-decoration: none; /* Remove underline if button styles are reset */
+  color: var(--genesis-text-primary); /* Default text color for the title */
+}
+
+/* Overlay for better text readability over images */
+.forge-category-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to top,
+    rgba(var(--genesis-surface-rgb), 0.85) 0%,
+    rgba(var(--genesis-surface-rgb), 0.6) 40%,
+    transparent 100%
+  );
+  opacity: 0.8; /* Start with a noticeable overlay */
+  transition: opacity var(--transition-duration) ease;
+  z-index: 1;
+}
+
+.forge-category-title {
+  /* Was: .prompt-title */
+  font-family: var(--font-heading);
+  font-size: 1rem; /* 16px, adjust as needed */
+  font-weight: 600;
+  color: var(--genesis-text-primary);
+  text-align: center;
+  position: relative;
+  z-index: 2; /* Above the overlay */
+  padding: calc(var(--spacing-unit) * 0.5) var(--spacing-unit);
+  /* Optional: subtle background for the title itself for more pop */
+  /* background-color: rgba(var(--genesis-bg-rgb, 15, 23, 42), 0.5); */
+  /* border-radius: var(--border-radius-sm); */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.forge-category-card:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: var(--shadow-md); /* Use Genesis shadow */
+  border-color: var(--genesis-primary-accent);
+}
+
+.forge-category-card:hover::before {
+  opacity: 0.6; /* Make overlay slightly more transparent on hover to reveal more image */
+}
+
+.forge-category-card.selected {
+  border-color: var(--genesis-primary-accent);
+  box-shadow: 0 0 0 3px rgba(var(--genesis-primary-accent-rgb), 0.7),
+    /* Outer glow */ var(--shadow-md); /* Inner shadow from general cards */
+  transform: scale(1.05); /* Slightly larger when selected */
+}
+
+.forge-category-card.selected::before {
+  opacity: 0.5; /* Even more image visibility when selected */
+  background: linear-gradient(
+    to top,
+    rgba(var(--genesis-primary-accent-rgb), 0.5) 0%,
+    rgba(var(--genesis-primary-accent-rgb), 0.2) 50%,
+    transparent 100%
+  );
+}
+
+.forge-category-card.selected .forge-category-title {
+  color: var(--genesis-primary-accent); /* Highlight title color */
+  font-weight: 700;
+  /* Optional: Add an icon or different background to selected title */
+}
+
+/* --- Ensure previous styles for .chronicle-forge-page etc. are present --- */
+/* ... (all other styles from the previous "Chronicle Forge" CSS for StoryCreator.tsx) ... */
+
+/* Example: Make sure the keyframes for spinner is defined */
+@keyframes genesis-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

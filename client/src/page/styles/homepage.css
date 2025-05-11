@@ -1,92 +1,708 @@
+/* styles/homepage.css */
 
-/* Root variables for consistent theming */
+/* --- Font Imports (ensure these are at the top or in index.html) --- */
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Syne:wght@400;700;800&family=Inter:wght@300;400;500;600;700;900&family=Roboto:wght@300;400;700&display=swap");
+
+/* --- :root Variables --- */
 :root {
-  --primary-color: #5e60ce; /* Teal */
-  --secondary-color: #f72585; /* Pink */
-  --background-color: #1d1c1d; /* Dark background */
-  --text-color: #ffffff; /* White text */
-  --font-family: 'Arial', sans-serif;
-  --border-radius: 8px;
-  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* Luminous Nexus Theme Variables (Logged-Out) */
+  --nexus-bg-dark: #0c0a1d;
+  --nexus-bg-mid: #1a143a;
+  --nexus-bg-mid-rgb: 26, 20, 58;
+  --nexus-primary-glow: #ffffff;
+  --nexus-primary-glow-rgb: 138, 43, 226;
+  --nexus-secondary-glow: #ffffff;
+  --nexus-secondary-glow-rgb: 76, 201, 240;
+  --nexus-accent-glow: #f72585;
+  --nexus-accent-glow-rgb: 247, 37, 133;
+  --nexus-text-light: #e0e0e0;
+  --nexus-text-light-rgb: 224, 224, 224; /* For spinner */
+  --nexus-text-medium: #b0b0b0;
+  --nexus-text-dark: #1f1f2e;
+  --font-nexus-title: "Orbitron", "Syne", sans-serif; /* Example specific font for nexus title */
+  --font-nexus-body: "Roboto", sans-serif;
+
+  /* Genesis Deck Theme Variables (Logged-In Dashboard) */
+  --genesis-bg: #0f172a;
+  --genesis-surface: #1e293b;
+  --genesis-surface-rgb: 30, 41, 59;
+  --genesis-border: #334155;
+  --genesis-primary-accent: #00cfde; /* Cyan */
+  --genesis-primary-accent-rgb: 0, 207, 222;
+  --genesis-primary-accent-darker: #00a9b8;
+  --genesis-secondary-accent: #f000b8; /* Magenta */
+  --genesis-secondary-accent-rgb: 240, 0, 184;
+  --genesis-text-primary: #f3f4f6;
+  --genesis-text-secondary: #9ca3af;
+  --genesis-text-secondary-rgb: 156, 163, 175; /* For status tag bg */
+  --genesis-text-on-accent: #0a0d14;
+  --genesis-success: #14f195;
+  --genesis-success-rgb: 20, 241, 149;
+  --genesis-error: #ff4d4d;
+
+  /* Shared Typography & Sizing */
+  --font-heading-global: "Syne", "Inter", sans-serif;
+  --font-body-global: "Inter", "Roboto", sans-serif;
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --spacing-unit: 8px;
+  --transition-duration: 0.3s;
+  --transition-cubic: cubic-bezier(0.645, 0.045, 0.355, 1);
+
+  /* Effects */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
-/* General body styling */
+/* --- General Body & HTML --- */
+html,
 body {
   margin: 0;
   padding: 0;
-  font-family: var(--font-family);
-  background-color: var(--background-color);
-  color: var(--text-color);
+  font-family: var(--font-body-global); /* Use global body font */
   line-height: 1.6;
+  background-color: var(
+    --nexus-bg-dark
+  ); /* Default to nexus, dashboard can override */
+  color: var(--nexus-text-light);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Header styling */
-header {
-  background-color: var(--primary-color);
-  padding: 1rem;
-  text-align: center;
-  color: var(--secondary-color);
+body.nexus-active {
+  /* Applied via JS when nexus-homepage is active */
+  overflow-x: hidden;
+  background-color: var(--nexus-bg-dark); /* Ensure nexus bg */
 }
 
-header h1 {
-  font-size: 2rem;
-  margin: 0;
-}
-
-/* Main content styling */
-main {
-  padding: 2rem;
-  text-align: center;
-}
-
-/* Button styling */
-button {
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: bold;
-  color: var(--text-color);
-  background-color: var(--primary-color);
-  border: none;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 1rem;
-}
-
-button:hover {
-  background-color: var(--secondary-color);
-}
-
-/* Footer styling */
-footer {
-  background-color: var(--primary-color);
-  color: var(--text-color);
-  text-align: center;
-  padding: 1rem;
+/* ==========================================================================
+   LUMINOUS NEXUS STYLES (LOGGED-OUT HOMEPAGE - .nexus-homepage)
+   ========================================================================== */
+.nexus-homepage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   position: relative;
-  bottom: 0;
-  width: 100%;
+  overflow: hidden; /* Important for absolute layers */
+  background-color: var(--nexus-bg-dark); /* Explicitly set for this view */
+  font-family: var(--font-nexus-body);
 }
 
-footer p {
-  margin: 0;
-  font-size: 0.875rem;
+.nexus-background-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transition: transform 0.1s linear;
+  transform-origin: center center;
 }
-/* Center the homepage container */
-.homepage-container {
+.nexus-background-layer:not([style*="transform"]) {
+  transform: translate(0, 0) scale(1) !important;
+}
+
+.back-particles {
+  background-image: radial-gradient(
+      var(--nexus-primary-glow) 0.5px,
+      transparent 0.5px
+    ),
+    radial-gradient(var(--nexus-secondary-glow) 0.5px, transparent 0.5px);
+  background-size: 40px 40px, 60px 60px;
+  background-position: 0 0, 20px 20px;
+  opacity: 0.15;
+  animation: nexusDriftParticles 80s linear infinite alternate;
+}
+@keyframes nexusDriftParticles {
+  0% {
+    background-position: 0% 0%, 20px 20px;
+  }
+  50% {
+    background-position: 100% 50%, 1020px 520px;
+  }
+  100% {
+    background-position: 0% 100%, 20px 1020px;
+  }
+}
+
+.mid-glow {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(var(--nexus-primary-glow-rgb), 0.25) 0%,
+    transparent 65%
+  );
+  animation: nexusPulseGlow 10s infinite alternate;
+}
+@keyframes nexusPulseGlow {
+  0% {
+    transform: scale(1.1) translate(0, 0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.4) translate(0, 0);
+    opacity: 0.2;
+  }
+}
+
+.front-stars {
+  background: radial-gradient(
+      circle at 10% 20%,
+      var(--nexus-text-light) 0.5px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 30% 80%,
+      var(--nexus-text-light) 1px,
+      transparent 1.5px
+    ),
+    radial-gradient(
+      circle at 75% 30%,
+      var(--nexus-text-light) 0.5px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 90% 70%,
+      var(--nexus-text-light) 1px,
+      transparent 1.5px
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      var(--nexus-text-light) 0.75px,
+      transparent 1.25px
+    );
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  opacity: 0.5;
+  animation: nexusTwinkleStars 12s infinite ease-in-out;
+}
+@keyframes nexusTwinkleStars {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.nexus-header {
+  padding: 2rem 3rem;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+}
+.nexus-logo {
+  height: 60px;
+  opacity: 0.95;
+  filter: drop-shadow(0 0 15px var(--nexus-secondary-glow));
+}
+
+.nexus-main-content {
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
   text-align: center;
-  background-color: #f5f5f5; /* Optional background color */
+  padding: 2rem 3rem;
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-/* Style the logo */
-.homepage-logo {
-  display: block;
+.nexus-core {
+  width: 250px;
+  height: 250px;
+  margin-bottom: 2.5rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    var(--nexus-primary-glow) 0%,
+    rgba(var(--nexus-bg-mid-rgb), 0.7) 60%,
+    transparent 100%
+  );
+  box-shadow: 0 0 40px 15px var(--nexus-primary-glow),
+    0 0 60px 25px var(--nexus-secondary-glow),
+    inset 0 0 25px 8px rgba(255, 255, 255, 0.2);
+  animation: nexusRotateCore 20s linear infinite,
+    nexusPulseCoreBorder 3s infinite alternate;
+  position: relative;
+}
+.nexus-core::before,
+.nexus-core::after {
+  content: "";
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  right: -15px;
+  bottom: -15px;
+  border-radius: 50%;
+  border: 3px dashed var(--nexus-secondary-glow);
+  opacity: 0.6;
+  animation: nexusRotateCoreReverse 30s linear infinite;
+}
+.nexus-core::after {
+  border-style: dotted;
+  animation-duration: 25s;
+  opacity: 0.4;
+  border-width: 2px;
+}
+@keyframes nexusRotateCore {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes nexusRotateCoreReverse {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+@keyframes nexusPulseCoreBorder {
+  0% {
+    box-shadow: 0 0 40px 15px var(--nexus-primary-glow),
+      0 0 60px 25px var(--nexus-secondary-glow),
+      inset 0 0 25px 8px rgba(255, 255, 255, 0.2);
+    opacity: 0.8;
+  }
+  100% {
+    box-shadow: 0 0 50px 20px var(--nexus-primary-glow),
+      0 0 80px 35px var(--nexus-secondary-glow),
+      inset 0 0 30px 10px rgba(255, 255, 255, 0.3);
+    opacity: 1;
+  }
+}
+
+.nexus-title {
+  font-family: var(--font-nexus-title);
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  font-weight: 900;
+  margin-bottom: 1.5rem;
+  color: var(--nexus-text-light);
+  letter-spacing: 3px;
+  text-shadow: 0 0 12px var(--nexus-primary-glow),
+    0 0 25px var(--nexus-secondary-glow), 0 0 5px var(--nexus-text-light);
+}
+.nexus-title span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: nexusFadeInLetter 0.6s forwards;
+}
+.nexus-title span:nth-child(1) {
+  animation-delay: 0.2s;
+}
+.nexus-title span:nth-child(2) {
+  animation-delay: 0.45s;
+}
+.nexus-title span:nth-child(3) {
+  animation-delay: 0.7s;
+}
+@keyframes nexusFadeInLetter {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.nexus-subtitle {
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  color: var(--nexus-text-medium);
+  max-width: 700px;
+  line-height: 1.8;
+  margin-bottom: 3rem;
+  opacity: 0;
+  animation: nexusFadeInSubtitle 1.2s forwards 1s;
+}
+@keyframes nexusFadeInSubtitle {
+  to {
+    opacity: 0.9;
+  }
+}
+
+.nexus-cta-button {
+  font-family: var(--font-nexus-title);
+  font-size: 1.3rem;
+  padding: 1.2rem 3rem;
+  background: linear-gradient(
+    145deg,
+    var(--nexus-secondary-glow),
+    var(--nexus-primary-glow)
+  );
+  color: var(--nexus-text-dark);
+  font-weight: 700;
+  border: none;
+  border-radius: 50px;
+  box-shadow: 0 5px 20px rgba(var(--nexus-primary-glow-rgb), 0.5);
+  cursor: pointer;
+  transition: transform var(--transition-duration),
+    box-shadow var(--transition-duration), background-position 1s ease;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  background-size: 200% auto;
+  opacity: 0;
+  animation: nexusFadeInButton 1.2s forwards 1.2s;
+}
+.nexus-cta-button:hover {
+  background-position: right center;
+  transform: scale(1.08);
+  box-shadow: 0 10px 30px rgba(var(--nexus-secondary-glow-rgb), 0.6);
+}
+@keyframes nexusFadeInButton {
+  to {
+    opacity: 1;
+  }
+}
+
+.nexus-footer {
+  padding: 2rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--nexus-text-medium);
+  opacity: 0.7;
+  position: relative;
+  z-index: 10;
+}
+
+/* ==========================================================================
+   GENESIS DECK STYLES (LOGGED-IN DASHBOARD - .genesis-dashboard)
+   ========================================================================== */
+.genesis-dashboard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--genesis-bg); /* Use Genesis bg */
+  color: var(--genesis-text-primary);
+  font-family: var(--font-body-global);
+}
+
+.genesis-header {
+  background-color: var(--genesis-surface);
+  padding: calc(var(--spacing-unit) * 1.5) 0;
+  border-bottom: 1px solid var(--genesis-border);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  box-sizing: border-box;
+}
+.genesis-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  max-width: 1600px;
   margin: 0 auto;
-  width: 400px; /* Adjust as needed */
-  height: auto;
+  padding: 0 var(--spacing-unit);
+}
+.genesis-logo {
+  height: 36px;
+  filter: grayscale(50%) brightness(1.5);
+}
+.genesis-title-header {
+  font-family: var(--font-heading-global);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--genesis-text-primary);
+  margin: 0;
+  text-align: center;
+  flex-grow: 1;
+  white-space: nowrap;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+/* --- Main Content Area --- */
+.genesis-main {
+  flex-grow: 1;
+  width: 90%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: calc(var(--spacing-unit) * 4) var(--spacing-unit);
+  box-sizing: border-box;
+}
+.genesis-actions-bar {
+  margin-bottom: calc(var(--spacing-unit) * 4);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* --- Buttons (Genesis Specific) --- */
+.genesis-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-unit);
+  font-family: var(--font-heading-global);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  padding: calc(var(--spacing-unit) * 1.25) calc(var(--spacing-unit) * 2.5);
+  border-radius: var(--border-radius-md);
+  border: 2px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition-duration) var(--transition-cubic);
+  white-space: nowrap;
+}
+.genesis-button-primary {
+  background-color: var(--genesis-primary-accent);
+  color: var(--genesis-text-on-accent);
+  box-shadow: 0 4px 15px rgba(var(--genesis-primary-accent-rgb), 0.3);
+}
+.genesis-button-primary:hover {
+  background-color: var(--genesis-primary-accent-darker);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(var(--genesis-primary-accent-rgb), 0.4);
+}
+.genesis-button-primary.genesis-create-button {
+  font-size: 1rem;
+  padding: calc(var(--spacing-unit) * 1.5) calc(var(--spacing-unit) * 3);
+}
+.genesis-button-icon {
+  font-size: 1.1em;
+}
+.genesis-button-outline {
+  background-color: transparent;
+  color: var(--genesis-primary-accent);
+  border-color: var(--genesis-primary-accent);
+}
+.genesis-button-outline:hover {
+  background-color: rgba(var(--genesis-primary-accent-rgb), 0.1);
+  color: var(--genesis-primary-accent-darker);
+  border-color: var(--genesis-primary-accent-darker);
+}
+/* Logout button is a genesis-button-outline */
+.genesis-header .genesis-button-outline {
+  /* More specific if needed */
+  padding: calc(var(--spacing-unit) * 0.75) calc(var(--spacing-unit) * 1.5); /* Smaller header button */
+}
+
+.genesis-button-secondary {
+  background-color: var(--genesis-surface);
+  color: var(--genesis-text-secondary);
+  border-color: var(--genesis-border);
+  font-weight: 500;
+  font-family: var(--font-body-global);
+  padding: calc(var(--spacing-unit) * 0.75) calc(var(--spacing-unit) * 1.5);
+}
+.genesis-button-secondary:hover {
+  background-color: var(--genesis-border);
+  color: var(--genesis-text-primary);
+  border-color: var(--genesis-text-secondary);
+}
+.genesis-button-danger-outline {
+  background-color: transparent;
+  color: var(--genesis-error);
+  border-color: var(--genesis-error);
+  font-weight: 500;
+  font-family: var(--font-body-global);
+  padding: calc(var(--spacing-unit) * 0.75) calc(var(--spacing-unit) * 1.5);
+}
+.genesis-button-danger-outline:hover {
+  background-color: rgba(255, 77, 77, 0.1);
+}
+.genesis-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* --- State Indicators (Loading, Error, Empty) --- */
+.genesis-state-indicator {
+  text-align: center;
+  padding: calc(var(--spacing-unit) * 5) var(--spacing-unit);
+  margin: calc(var(--spacing-unit) * 3) auto;
+  background-color: var(--genesis-surface);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--genesis-border);
+  max-width: 600px;
+}
+.genesis-state-indicator h2 {
+  font-family: var(--font-heading-global);
+  font-size: 1.5rem;
+  color: var(--genesis-text-primary);
+  margin-bottom: var(--spacing-unit);
+}
+.genesis-state-indicator p {
+  font-size: 1rem;
+  color: var(--genesis-text-secondary);
+  margin-top: var(--spacing-unit);
+  margin-bottom: calc(var(--spacing-unit) * 2);
+}
+.genesis-spinner {
+  border: 4px solid rgba(var(--genesis-primary-accent-rgb), 0.2);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border-left-color: var(--genesis-primary-accent);
+  animation: genesis-spin 0.8s linear infinite;
+  margin: 0 auto var(--spacing-unit);
+}
+@keyframes genesis-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.genesis-error {
+  border-left: 5px solid var(--genesis-error);
+}
+.genesis-empty .genesis-button-primary {
+  margin-top: var(--spacing-unit);
+}
+
+/* --- Adventure Grid & Cards --- */
+.genesis-adventure-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: calc(var(--spacing-unit) * 3);
+}
+.genesis-adventure-card {
+  background-color: var(--genesis-surface);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--genesis-border);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform var(--transition-duration) var(--transition-cubic),
+    box-shadow var(--transition-duration) var(--transition-cubic),
+    border-color var(--transition-duration) var(--transition-cubic);
+}
+.genesis-adventure-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: var(--shadow-md);
+  border-color: var(--genesis-primary-accent);
+}
+.genesis-adventure-card .card-body {
+  padding: calc(var(--spacing-unit) * 2.5);
+  flex-grow: 1;
+}
+.genesis-adventure-card .card-title {
+  font-family: var(--font-heading-global);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--genesis-text-primary);
+  margin: 0 0 calc(var(--spacing-unit) * 1.5);
+  line-height: 1.3;
+}
+.genesis-adventure-card .card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-unit);
+  margin-bottom: calc(var(--spacing-unit) * 1.5);
+}
+.genesis-adventure-card .card-category-tag,
+.genesis-adventure-card .card-status-tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: calc(var(--spacing-unit) * 0.5) var(--spacing-unit);
+  border-radius: var(--border-radius-sm);
+  white-space: nowrap;
+}
+.genesis-adventure-card .card-category-tag {
+  background-color: rgba(var(--genesis-secondary-accent-rgb), 0.15);
+  color: var(--genesis-secondary-accent);
+}
+.genesis-adventure-card .card-status-tag.status-active {
+  background-color: rgba(var(--genesis-success-rgb), 0.15);
+  color: var(--genesis-success);
+}
+.genesis-adventure-card .card-status-tag.status-complete {
+  background-color: rgba(var(--genesis-text-secondary-rgb), 0.15);
+  color: var(--genesis-text-secondary);
+}
+.genesis-adventure-card .card-actions {
+  display: flex;
+  gap: var(--spacing-unit);
+  padding: var(--spacing-unit) calc(var(--spacing-unit) * 2);
+  border-top: 1px solid var(--genesis-border);
+  background-color: rgba(var(--genesis-surface-rgb), 0.5);
+}
+.genesis-adventure-card .card-actions .genesis-button {
+  flex-grow: 1;
+}
+
+/* --- Footer --- */
+.genesis-footer {
+  text-align: center;
+  padding: calc(var(--spacing-unit) * 3) var(--spacing-unit);
+  margin-top: auto;
+  background-color: var(--genesis-surface);
+  border-top: 1px solid var(--genesis-border);
+  color: var(--genesis-text-secondary);
+  font-size: 0.875rem;
+}
+.genesis-footer p {
+  margin: 0;
+}
+
+/* --- Responsive Adjustments (Shared Nexus & Genesis where applicable, then specific) --- */
+@media (max-width: 992px) {
+  /* Tablet */
+  .nexus-main-content,
+  .genesis-main {
+    width: 95%;
+    padding-left: var(--spacing-unit);
+    padding-right: var(--spacing-unit);
+  }
+  .nexus-core {
+    width: 200px;
+    height: 200px;
+    margin-bottom: 2rem;
+  }
+  .nexus-title {
+    font-size: clamp(2.5rem, 8vw, 4rem);
+  }
+  .genesis-title-header {
+    font-size: 1.3rem;
+  }
+  .genesis-adventure-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: calc(var(--spacing-unit) * 2);
+  }
+}
+
+@media (max-width: 768px) {
+  /* Mobile */
+  .nexus-header {
+    padding: 1.5rem;
+  }
+  .nexus-logo {
+    height: 50px;
+  }
+  .nexus-core {
+    width: 150px;
+    height: 150px;
+    margin-bottom: 1.5rem;
+  }
+  .nexus-title {
+    letter-spacing: 1px;
+  }
+
+  .genesis-header-content {
+    flex-direction: column;
+    gap: var(--spacing-unit);
+    padding-top: var(--spacing-unit);
+    padding-bottom: var(--spacing-unit);
+  }
+  .genesis-title-header {
+    text-align: center;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .genesis-actions-bar {
+    justify-content: center;
+  }
+  .genesis-create-button {
+    width: 100%;
+    max-width: 320px;
+  }
+  .genesis-adventure-grid {
+    grid-template-columns: 1fr;
+  }
 }
