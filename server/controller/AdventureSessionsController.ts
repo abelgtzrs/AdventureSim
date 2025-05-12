@@ -1,5 +1,5 @@
 import AdventureSession from "../models/AdventureSession";
-import type { IEntry } from "../models/AdventureSession";
+import type { IEntry } from "../models/AdventureSession"; // Ensure IEntry is correctly typed
 import { getAIResponse, getEpilogue } from "../utils/openai";
 
 // 1. Create a new adventure session
@@ -7,15 +7,47 @@ export const createAdventureSession = async (data: {
   userId: string;
   title: string;
   category: string;
-  entries?: IEntry[];
-  isActive?: boolean;
+  // entries?: IEntry[]; // Usually undefined for a new session from StoryCreator
+  // isActive?: boolean; // Usually true by default
 }) => {
+  // Construct a directive initial prompt for the AI to start the story
+  const initialSystemInstruction = `You are the narrator for an adventure titled "${data.title}" in the ${data.category} genre. Begin the story by vividly describing the opening scene and the situation the player finds themselves in. Set the stage for their first action. Do not include "Chaos Rating" or "Achievement Unlocked" in this initial opening.`;
+
+  let firstEntry: IEntry;
+
+  try {
+    const initialAIResponse = await getAIResponse({
+      category: data.category,
+      entries: [], // No prior entries for a new story
+      userInput: initialSystemInstruction, // Use the detailed instruction
+      turnNumber: 0, // Signifies the start (or 1 if you prefer)
+    });
+
+    // Ensure the response from getAIResponse is structured as expected
+    // and doesn't inadvertently contain user prompt-like structures
+    firstEntry = {
+      prompt: "[STORY_INITIATION]", // Internal marker, not displayed as user input
+      response: initialAIResponse.response, // The AI's opening narrative
+      chaosScore: initialAIResponse.chaosScore, // This might be null/undefined if excluded by prompt
+      timestamp: new Date(),
+    };
+  } catch (aiError) {
+    console.error(
+      "Failed to get initial AI response during session creation:",
+      aiError
+    );
+    // Decide how to handle this: throw error, or create session with a placeholder error entry?
+    // For now, let's throw, as a story needs a start.
+    throw new Error(
+      "Failed to generate the opening for your adventure. Please try again."
+    );
+  }
+
   const newSession = new AdventureSession({
     userId: data.userId,
     title: data.title,
     category: data.category,
-    entries: data.entries || [],
-    isActive: data.isActive ?? true,
+    entries: [firstEntry], // <<< Story starts with the first AI-generated segment
     createdAt: new Date(),
   });
 

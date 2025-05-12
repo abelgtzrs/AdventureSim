@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery, useMutation, gql } from "@apollo/client";
-import "./storyplayer.css"; // This will be the new CSS
+import { useQuery, useMutation, gql, ApolloError } from "@apollo/client"; // Ensure ApolloError is imported
+import "./storyplayer.css"; // This will be the "Narrative Focus" CSS
 
-/* ---------- GraphQL Definitions (Ensure these are correct as before) ---------- */
+/* ---------- GraphQL Definitions (from your working code) ---------- */
 const GET_ADVENTURE_SESSION = gql`
   query GetAdventureSession($id: ID!) {
     getAdventureSession(id: $id) {
@@ -43,7 +43,7 @@ const END_ADVENTURE = gql`
   }
 `;
 
-/* ---------- Types (As before) ---------- */
+/* ---------- Types (from your working code) ---------- */
 interface Entry {
   prompt?: string;
   response?: string;
@@ -58,7 +58,7 @@ interface Session {
   entries: Entry[];
 }
 
-/* ---------- Helpers (parseExtrasAndCleanResponse as before) ---------- */
+/* ---------- Helpers (from your working code) ---------- */
 const parseExtrasAndCleanResponse = (
   text: string,
   entryChaosScore?: number
@@ -68,6 +68,7 @@ const parseExtrasAndCleanResponse = (
   const chaos = entryChaosScore?.toString() ?? chaosMatch?.[1] ?? null;
   const achMatch = cleanedText.match(/Achievement Unlocked: (.+?)(?:\n|$)/);
   const achievement = achMatch?.[1]?.trim() ?? null;
+
   if (chaosMatch) cleanedText = cleanedText.replace(chaosMatch[0], "").trim();
   if (achMatch) cleanedText = cleanedText.replace(achMatch[0], "").trim();
   return { chaos, achievement, cleanedText };
@@ -81,14 +82,20 @@ function EpilogueView({
   session: Session;
   onBack: () => void;
 }) {
-  const lastEntry = session?.entries?.find(
-    (entry) => entry.prompt === "[Final Outcome]"
-  );
-  const epilogueText = lastEntry?.response ?? "The story has concluded.";
+  // Use optional chaining for safety, though session should be valid here
+  const lastRelevantEntry = session?.entries
+    ?.slice()
+    .reverse()
+    .find((entry) => entry.response && entry.response.trim() !== "");
+
+  const epilogueText =
+    session?.entries?.find((e) => e.prompt === "[Final Outcome]")?.response ||
+    lastRelevantEntry?.response ||
+    "The story has concluded.";
   return (
     <div className="narrative-epilogue-container">
       <div className="narrative-epilogue-content">
-        <span className="narrative-epilogue-icon">📖</span> {/* Book icon */}
+        <span className="narrative-epilogue-icon">📖</span>
         <h2>The Final Chapter</h2>
         <p
           className="narrative-epilogue-text"
@@ -107,13 +114,13 @@ function EpilogueView({
   );
 }
 
-/* ---------- Main Component: The Narrative Focus ---------- */
+/* ---------- Main Story Player Component: "The Narrative Focus" ---------- */
 export default function StoryPlayer() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   const [input, setInput] = useState("");
-  const [isWaitingForAI, setIsWaitingForAI] = useState(false);
+  const [isWaitingForAI, setIsWaitingForAI] = useState(false); // Kept from your working logic
   const [toasts, setToasts] = useState<Array<{ id: number; message: string }>>(
     []
   );
@@ -121,52 +128,168 @@ export default function StoryPlayer() {
     []
   );
   const [currentChaos, setCurrentChaos] = useState<string | null>(null);
-  const [isContextPanelOpen, setIsContextPanelOpen] = useState(false); // For mobile sidebar toggle
+  const [isContextPanelOpen, setIsContextPanelOpen] = useState(false);
 
-  const storyFeedRef = useRef<HTMLDivElement>(null);
+  const storyFeedRef = useRef<HTMLDivElement>(null); // Renamed from weaveAreaRef for clarity
   const previousAchievementsSetRef = useRef<Set<string>>(new Set());
 
-  const { loading, error, data, refetch } = useQuery<{
+  const {
+    loading: queryLoading,
+    error: queryError,
+    data,
+    refetch,
+  } = useQuery<{
     getAdventureSession: Session | null;
   }>(GET_ADVENTURE_SESSION, {
     variables: { id },
     fetchPolicy: "network-only",
     onCompleted: (queryData) => {
-      /* ... (auto-start logic as before) ... */
+      // This is from your working logic for initial turn
+      const currentSession = queryData?.getAdventureSession;
+      if (
+        currentSession?.isActive &&
+        currentSession.entries && // Check entries directly
+        currentSession.entries.length === 0 &&
+        id
+      ) {
+        setIsWaitingForAI(true);
+        continueAdventureMutation({
+          variables: { sessionId: id, input: "[BEGIN]" }, // Or whatever initial input works
+        })
+          .then(() => {
+            refetch();
+            // setIsWaitingForAI(false); // Moved to finally
+          })
+          .catch((err) =>
+            console.error("Error automatically starting adventure:", err)
+          )
+          .finally(() => setIsWaitingForAI(false)); // Ensure this is always called
+      }
     },
   });
   const session = data?.getAdventureSession;
 
-  const [continueAdventureMutation] = useMutation(CONTINUE_ADVENTURE);
-  const [endAdventureMutation] = useMutation(END_ADVENTURE);
+  // Using loading state from useMutation directly for more granular control if needed
+  const [continueAdventureMutation, { loading: continueMutationLoading }] =
+    useMutation(CONTINUE_ADVENTURE, {
+      // No onCompleted or onError here, handled in handleSendInput's try/catch/finally
+      // This is based on your provided working logic's structure for handleSendInput
+    });
+  const [endAdventureMutation, { loading: endMutationLoading }] =
+    useMutation(END_ADVENTURE);
+
+  // A general processing state based on query or mutation loading
+  const isProcessing =
+    queryLoading ||
+    isWaitingForAI ||
+    continueMutationLoading ||
+    endMutationLoading;
 
   useEffect(() => {
-    /* ... (auto-scroll logic as before for storyFeedRef) ... */
+    if (storyFeedRef.current) {
+      storyFeedRef.current.scrollTo({
+        top: storyFeedRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
   }, [session?.entries?.length]);
+
   const pushToast = useCallback((msg: string) => {
-    /* ... (as before) ... */
+    const newToast = { id: Date.now(), message: msg };
+    setToasts((currentToasts) => [...currentToasts, newToast]);
+    setTimeout(() => {
+      setToasts((currentToasts) =>
+        currentToasts.filter((t) => t.id !== newToast.id)
+      );
+    }, 5000);
   }, []);
+
   useEffect(() => {
-    /* ... (stats and achievements update logic as before) ... */
+    if (!session || !session.entries) {
+      setCurrentChaos(null);
+      setDisplayedAchievements([]);
+      previousAchievementsSetRef.current = new Set();
+      return;
+    }
+    const allAchievementsInSession = new Set<string>();
+    let lastChaosValueInSession: string | null = null;
+    session.entries.forEach((entry) => {
+      const aiText = entry.response ?? "";
+      const { chaos, achievement } = parseExtrasAndCleanResponse(
+        aiText,
+        entry.chaosScore
+      );
+      if (chaos) lastChaosValueInSession = chaos;
+      if (achievement) {
+        allAchievementsInSession.add(achievement);
+        if (!previousAchievementsSetRef.current.has(achievement)) {
+          pushToast(`🏆 Achievement Unlocked: ${achievement}`); // Icon added here
+        }
+      }
+    });
+    setCurrentChaos(lastChaosValueInSession);
+    setDisplayedAchievements(Array.from(allAchievementsInSession));
+    previousAchievementsSetRef.current = new Set(allAchievementsInSession);
   }, [session, pushToast]);
+
   const handleSendInput = async () => {
-    /* ... (as before) ... */
-  };
-  const handleEndStory = async () => {
-    /* ... (as before) ... */
+    if (!input.trim() || !session?.isActive || !id || isWaitingForAI) {
+      // isWaitingForAI check
+      console.warn("Send input blocked by guard");
+      return;
+    }
+    setIsWaitingForAI(true); // Set loading state
+    const currentInput = input.trim();
+    setInput("");
+    try {
+      await continueAdventureMutation({
+        variables: { sessionId: id, input: currentInput },
+      });
+      refetch(); // Refetch after successful mutation
+    } catch (err: any) {
+      // Catch specific ApolloError or general error
+      console.error("Error continuing adventure:", err);
+      const userMessage =
+        err.graphQLErrors?.[0]?.message ||
+        err.networkError?.message ||
+        "Error sending action.";
+      pushToast(`Error: ${userMessage}`);
+    } finally {
+      setIsWaitingForAI(false); // Reset loading state
+    }
   };
 
-  if (loading && !data)
+  const handleEndStory = async () => {
+    if (!session?.isActive || !id || isWaitingForAI) return;
+    if (window.confirm("Are you sure you want to end this adventure?")) {
+      setIsWaitingForAI(true);
+      try {
+        await endAdventureMutation({ variables: { sessionId: id } });
+        refetch();
+      } catch (err: any) {
+        console.error("Error ending adventure:", err);
+        const userMessage =
+          err.graphQLErrors?.[0]?.message ||
+          err.networkError?.message ||
+          "Error ending story.";
+        pushToast(`Error: ${userMessage}`);
+      } finally {
+        setIsWaitingForAI(false);
+      }
+    }
+  };
+
+  if (queryLoading && !data)
     return (
       <div className="narrative-state-indicator narrative-loading">
         <div className="narrative-spinner"></div>
         <p>Loading Story...</p>
       </div>
     );
-  if (error)
+  if (queryError)
     return (
       <div className="narrative-state-indicator narrative-error">
-        <p>Error: {error.message}</p>
+        <p>Error: {queryError.message}</p>
         <button
           onClick={() => navigate("/")}
           className="narrative-button narrative-button-outline"
@@ -193,8 +316,10 @@ export default function StoryPlayer() {
   }
 
   const turnCount =
-    session.entries?.filter((e) => e.prompt && e.prompt !== "[BEGIN]").length ??
-    0;
+    session.entries?.filter(
+      (e) =>
+        e.prompt && e.prompt !== "[BEGIN]" && e.prompt !== "[STORY_INITIATION]"
+    ).length ?? 0;
 
   return (
     <div
@@ -224,7 +349,7 @@ export default function StoryPlayer() {
           <button
             onClick={handleEndStory}
             className="narrative-button narrative-button-danger end-story-button"
-            disabled={isWaitingForAI}
+            disabled={isWaitingForAI || endMutationLoading}
           >
             End Story
           </button>
@@ -253,8 +378,54 @@ export default function StoryPlayer() {
           ref={storyFeedRef}
           aria-live="polite"
         >
-          {session.entries.map((entry, idx) => {
-            if (entry.prompt === "[BEGIN]" && !entry.response) return null;
+          {(session.entries || []).map((entry, idx) => {
+            // Handle the very first entry if it was [BEGIN] or [STORY_INITIATION]
+            if (
+              (entry.prompt === "[BEGIN]" ||
+                entry.prompt === "[STORY_INITIATION]") &&
+              entry.response
+            ) {
+              const {
+                cleanedText: cleanedAiText,
+                chaos: entryChaos,
+                achievement: entryAchievement,
+              } = parseExtrasAndCleanResponse(
+                entry.response ?? "",
+                entry.chaosScore
+              );
+              return (
+                <div
+                  key={`init-${idx}`}
+                  className="narrative-entry ai-entry initial-narration"
+                >
+                  <div className="entry-content">
+                    {cleanedAiText && (
+                      <p
+                        dangerouslySetInnerHTML={{
+                          __html: cleanedAiText.replace(/\n/g, "<br />"),
+                        }}
+                      />
+                    )}
+                    {(entryChaos || entryAchievement) && (
+                      <div className="entry-meta">
+                        {entryChaos && (
+                          <span className="meta-tag chaos-tag">
+                            🌀 Chaos: {entryChaos}
+                          </span>
+                        )}
+                        {entryAchievement && (
+                          <span className="meta-tag achievement-tag">
+                            🏆 {entryAchievement}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            }
+
+            // Regular user prompts and subsequent AI responses
             const {
               cleanedText: cleanedAiText,
               chaos: entryChaos,
@@ -263,7 +434,10 @@ export default function StoryPlayer() {
               entry.response ?? "",
               entry.chaosScore
             );
-            const isUserEntry = entry.prompt && entry.prompt !== "[BEGIN]";
+            const isUserEntry =
+              entry.prompt &&
+              entry.prompt !== "[BEGIN]" &&
+              entry.prompt !== "[STORY_INITIATION]";
 
             return (
               <div
@@ -277,14 +451,13 @@ export default function StoryPlayer() {
                 )}
                 <div className="entry-content">
                   {isUserEntry && <p>{entry.prompt}</p>}
-                  {cleanedAiText && (
+                  {!isUserEntry && cleanedAiText && (
                     <p
                       dangerouslySetInnerHTML={{
                         __html: cleanedAiText.replace(/\n/g, "<br />"),
                       }}
                     />
                   )}
-                  {/* Meta data displayed subtly after content */}
                   {!isUserEntry && (entryChaos || entryAchievement) && (
                     <div className="entry-meta">
                       {entryChaos && (
@@ -303,7 +476,8 @@ export default function StoryPlayer() {
               </div>
             );
           })}
-          {isWaitingForAI && (session.entries?.length ?? 0) > 0 && (
+          {/* Use continueMutationLoading for the thinking indicator */}
+          {continueMutationLoading && (session.entries?.length ?? 0) > 0 && (
             <div className="narrative-entry ai-entry thinking-indicator">
               <div className="entry-content">
                 <div className="narrative-spinner small"></div>
@@ -319,11 +493,19 @@ export default function StoryPlayer() {
           }`}
         >
           <button
-            className="close-panel-button"
+            className="close-panel-button narrative-button-icon"
             onClick={() => setIsContextPanelOpen(false)}
             aria-label="Close Story Details"
           >
-            ×
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              width="20"
+              height="20"
+            >
+              <path d="M12.0007 10.5865L16.9504 5.63672L18.3646 7.05093L13.4149 12.0007L18.3646 16.9504L16.9504 18.3646L12.0007 13.4149L7.05093 18.3646L5.63672 16.9504L10.5865 12.0007L5.63672 7.05093L7.05093 5.63672L12.0007 10.5865Z"></path>
+            </svg>
           </button>
           <div className="panel-section">
             <h4>Category</h4>
@@ -343,7 +525,6 @@ export default function StoryPlayer() {
               }`}
             >
               <span className="chaos-value">{currentChaos ?? "N/A"}</span>
-              {/* Optional: Could be a visual bar/gauge here */}
             </div>
           </div>
           <div className="panel-section achievements-section">
@@ -366,7 +547,7 @@ export default function StoryPlayer() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Describe your next action..."
-          disabled={isWaitingForAI || !session.isActive}
+          disabled={isProcessing || !session.isActive} // Use combined isProcessing
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
@@ -378,7 +559,7 @@ export default function StoryPlayer() {
         <button
           onClick={handleSendInput}
           className="narrative-button narrative-send-button"
-          disabled={!input.trim() || isWaitingForAI || !session.isActive}
+          disabled={!input.trim() || isProcessing || !session.isActive}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -395,7 +576,8 @@ export default function StoryPlayer() {
       <div className="narrative-toast-container">
         {toasts.map((toast) => (
           <div key={toast.id} className="narrative-toast">
-            <p>{toast.message}</p>
+            {toast.message}{" "}
+            {/* Icon is already in the message from pushToast */}
           </div>
         ))}
       </div>
